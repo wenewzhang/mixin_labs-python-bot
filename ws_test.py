@@ -21,7 +21,6 @@ except ImportError:
 
 
 def on_message(ws, message):
-    print(message)
     inbuffer = BytesIO(message)
 
     f = gzip.GzipFile(mode="rb", fileobj=inbuffer)
@@ -55,7 +54,7 @@ def on_message(ws, message):
 
         print('userId', userId)
         print("created_at",created_at)
-
+        print("dataindata",dataindata)
 
         if 'error' in rdata_obj:
             return

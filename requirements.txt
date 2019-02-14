@@ -1,7 +1,8 @@
-cryptography==2.3.1
-ecdsa==0.13
-pycrypto==2.6.1
-PyJWT==1.6.4
-requests==2.19.1
-SQLAlchemy==1.2.12
-websocket-client==0.53.0
+cryptography==2.4.2
+pycparser==2.19
+pycryptodome==3.7.2
+PyJWT==1.7.1
+python-dateutil==2.7.5
+PyYAML==3.13
+requests==2.21.0
+websocket-client==0.54.0

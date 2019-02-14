@@ -29,7 +29,7 @@ def on_open(ws):
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("ws://127.0.0.1",
+    ws = websocket.WebSocketApp("wss://blaze.mixin.one/",
                               on_message = on_message,
                               on_error = on_error,
                               on_close = on_close)

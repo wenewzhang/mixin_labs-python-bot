@@ -29,7 +29,7 @@ def on_message(ws, message):
     action = rdata_obj["action"]
 
     if action not in ["ACKNOWLEDGE_MESSAGE_RECEIPT", "CREATE_MESSAGE", "LIST_PENDING_MESSAGES"]:
-        print("unknow action")
+        print("unknow action",action)
         return
 
     if action == "ACKNOWLEDGE_MESSAGE_RECEIPT":
@@ -54,18 +54,18 @@ def on_message(ws, message):
 
         print('userId', userId)
         print("created_at",created_at)
-        print("dataindata",dataindata)
+
 
         if 'error' in rdata_obj:
             return
 
         if categoryindata not in ["SYSTEM_ACCOUNT_SNAPSHOT", "PLAIN_TEXT", "SYSTEM_CONVERSATION", "PLAIN_STICKER", "PLAIN_IMAGE", "PLAIN_CONTACT"]:
-            print("unknow category")
+            print("unknow category",categoryindata)
             return
 
         if categoryindata == "PLAIN_TEXT" and typeindata == "message":
-            realData = realData.lower().decode('utf-8')
-
+            realData = realData.decode('utf-8')
+            print("dataindata",realData)
 
             if 'hi' == realData:
                 introductionContent = 'welcome to MyFirstRobot\n[hihi] reply n times text\n[c] send a contact card\n[b] send a link button\n[p] you need to pay\n[t] transfer to you'

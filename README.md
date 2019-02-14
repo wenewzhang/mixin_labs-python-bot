@@ -17,3 +17,14 @@ https://tecadmin.net/install-python-3-7-on-ubuntu-linuxmint/
 
 before build 3.7.2 install libffi-dev
 apt-get install libffi-dev
+
+python3 env
+```bash
+cd mixin_labs-python-bot
+python3 -m venv ./
+source ./bin/activate
+pip install --upgrade pip
+pip install -r requirements2.txt
+python3 ws_test.py
+
+```

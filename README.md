@@ -95,7 +95,7 @@ wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate
 ```
 So that “python” or "pip" invoke from the virtual environment, and you can run installed scripts without having to use their full path.
 
-## Install require packages in "virtual environment"
+## Install required packages by "virtual environment"
 
 Create the requirement list.
 > requirements.txt
@@ -109,7 +109,7 @@ PyYAML==3.13
 requests==2.21.0
 websocket-client==0.54.0
 ```
-Use pip to upgrade pip itself, and install require packages.
+Use pip to upgrade pip itself, and install required packages.
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt

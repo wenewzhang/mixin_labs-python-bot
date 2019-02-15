@@ -18,7 +18,7 @@ brew upgrade
 brew install python@3
 ```
 
-on Ubuntu, install python 3.7.2 from third apt source.
+on Ubuntu, install python 3.7.2 from the third apt source.
 ```bash
 sudo apt update
 sudo apt install software-properties-common
@@ -36,14 +36,14 @@ sudo apt install python3.7 python3.7-venv
 sudo ln -s /usr/bin/python3.7 /usr/bin/python3
 ```
 
-Check the installation whether success, you need check both python3 and python3-venv.
+Check whether the installation is success, you need check both python3 and python3-venv.
 ```bash
 $ python3 -V
 Python 3.7.2
 ```
 
 ```bash
-root@n2:~# python3 -m venv -h
+root@n2:~ python3 -m venv -h
 usage: venv [-h] [--system-site-packages] [--symlinks | --copies] [--clear]
             [--upgrade] [--without-pip] [--prompt PROMPT]
             ENV_DIR [ENV_DIR ...]
@@ -75,14 +75,14 @@ sourcing an activate script in its bin directory
 
 ## Create mixin_labs-python-bot project
 
-You need create project directory, make it as a python's “virtual environments”, and then install the require packages.
+You need create project directory, make it as a python's “virtual environment”, and then install the required packages.
 ```bash
 mkdir mixin_labs-python-bot
 cd mixin_labs-python-bot
 python3 -m venv ./
 ```
 
-You can find some default directories and files which create by **python3 -m venv** command.
+After **python3 -m venv** command finished,  the project directory has data like below:
 ```bash
 wenewzha:mixin_labs-python-bot wenewzhang$ ls
 bin		include		lib		pyvenv.cfg
@@ -160,8 +160,9 @@ UN0KsG9JPRVNeQR8HnwpAkACrr9cNp1H1bytHG9a6L+5cVHkRhqqEYWVO41MhgZF
 5bIKx5OXCJB2VwY7fjFet2KxTHGfEZt/khjFNZzVX7lN
 -----END RSA PRIVATE KEY-----"""
 ```
+Replace the value with YOUR APP  client_id, client_secret, and the pay_pin, pin token, pay_session_id, private key you have already generated them in dashboard.
 
-Create an app-mini.py file, fill the content below:
+Create an app-mini.py file, fill it by the content below:
 > app-mini.py
 ```python
 from mixin_ws_api import MIXIN_WS_API
@@ -190,7 +191,7 @@ def on_message(ws, message):
     print(rdata_obj)
     print("-------json object end---------")
     action = rdata_obj["action"]
-    
+
     if rdata_obj["data"] is not None:
         print("data in message:",rdata_obj["data"])
 

@@ -75,14 +75,14 @@ sourcing an activate script in its bin directory
 
 ## Create mixin_labs-python-bot project
 
-You need create project directory, make it as a python's “virtual environments”  and then install the require packages.
+You need create project directory, make it as a python's “virtual environments”, and then install the require packages.
 ```bash
 mkdir mixin_labs-python-bot
 cd mixin_labs-python-bot
 python3 -m venv ./
 ```
 
-You can find some default directories and files.
+You can find some default directories and files which create by **python3 -m venv** command.
 ```bash
 wenewzha:mixin_labs-python-bot wenewzhang$ ls
 bin		include		lib		pyvenv.cfg
@@ -93,7 +93,7 @@ Once a virtual environment has been created, it can be “activated” using a s
 wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$
 ```
-so that “python” or "pip" invoke the virtual environment’s Python interpreter and you can run installed scripts without having to use their full path.
+So that “python” or "pip" invoke from the virtual environment, and you can run installed scripts without having to use their full path.
 
 ## Install require packages in "virtual environment"
 
@@ -115,30 +115,163 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-apt install python3-pip
-
+## Download the mixin-network api.
 ```bash
 wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_ws_api.py
 wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_api.py
 wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_config.py
 ```
 
-ubuntu python3.7:
+## Hello, world!
 
-apt install python3 python3-venv
+### Create you first app in developer dashboard
+Create an app by following [tutorial](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account).
 
-https://tecadmin.net/install-python-3-7-on-ubuntu-linuxmint/
+### Generate parameter for your app
+Remember to [generate parameter](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app)
+and write down required information, they are required in config.php file soon.
 
-before build 3.7.2 install libffi-dev
-apt-get install libffi-dev
+![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/mixin_network-keys.jpg)
+In the folder, create a file: mixin_config.py. Copy the following content into it.
+> mixin_config.py
+```python
+client_id= 'ed882a39-0b0c-4413-bbd9-221cdeee56bf'
+client_secret = '8d7ec7b9c8261b6c7bd6309210496ca4b72bce9efc7e49be14a428ce49ff7202'
 
-python3 env
-```bash
-cd mixin_labs-python-bot
-python3 -m venv ./
-source ./bin/activate
-pip install --upgrade pip
-pip install -r requirements2.txt
-python3 ws_test.py
 
+pay_pin = '599509'
+pay_session_id = 'bd53b6a4-e79a-49e5-ad04-36da518354f6'
+pin_token = "nVREh0/Ys9vzNFCQT2+PKcDN2OYAUSH8CidwHqDQLOCvokE7o6wtvLypjW9iks/RsnBM6N4SPF/P3bBW254YHGuDZXhitDEWOGkXs7v8BxMQxf+9454qTkMSpR9xbjAzgMXnSyHrNVoBtsc/Y+NvemB3VxPfsCOFHasiMqAa5DU="
+
+
+private_key = """-----BEGIN RSA PRIVATE KEY-----
+MIICXQIBAAKBgQCnaoO1SdPxggEpAIUdM/8Ll4FOqlXK7vwURHr4FFi6hnQ1I79g
+pZSlJdzjr24WcIuNi6kVdXVIpyzZJGXS2I72dpGs5h1jKxL8AWIUVL2axZXqTJNi
+c4wj6GJ4gDRP2U9I9gae+S/frM6KP8TioV0OcbmrlfrwI0OElLH3363y1wIDAQAB
+AoGAduaGLi4F8cMkMculvqzcGY57jrQZBGyg6YANWb2Rmr+9LrR5yhkvLe9rJuXE
+KPm7k0a6SnxGVNguWPWpv4qAVVGAJ0eb8ETXTRO20HlKmcbxfFdDtHBDV3QufNa1
+h3mNEsqWDNCDdAm7p/EZwfG2F9+nmeXLfip7R1I72qbK0wkCQQDiJR6NEGVwbj8H
+K8kRpzY1D9lPqp1ZMrma5AFYGZIb5voTxLjRpYdxQJHi7CCdE1zgqJOXvA3jj/io
+f7bMIJY7AkEAvYSSC5H+fUKAjyjeCTGJBBKoPDsq+aALAYLWf77sGXE9BBmhhY0l
+iwmbj8X6/qZtQ0yEzdT/OSdiYL86CcrgFQJBALz/sMzMSzrvqJVhrqWmTdOC72d5
+fA+0KRKeQ9FRbZ8MJyymWKA96zhncoVoOsmMCS9pNBC4BhONm4+XTTrEcUkCQQCo
+DWB8Bg/G/yuExtZtDJHVHL41+rmW9UYNJvoR+TjfLrzOX/QMuyapbfGVwhdZrDaD
+UN0KsG9JPRVNeQR8HnwpAkACrr9cNp1H1bytHG9a6L+5cVHkRhqqEYWVO41MhgZF
+5bIKx5OXCJB2VwY7fjFet2KxTHGfEZt/khjFNZzVX7lN
+-----END RSA PRIVATE KEY-----"""
 ```
+
+Create an app-mini.py file, fill the content below:
+> app-mini.py
+```python
+from mixin_ws_api import MIXIN_WS_API
+from mixin_api import MIXIN_API
+import mixin_config
+
+import json
+import time
+from io import BytesIO
+import base64
+import gzip
+
+try:
+    import thread
+except ImportError:
+    import _thread as thread
+
+
+def on_message(ws, message):
+    inbuffer = BytesIO(message)
+
+    f = gzip.GzipFile(mode="rb", fileobj=inbuffer)
+    rdata_injson = f.read()
+    rdata_obj = json.loads(rdata_injson)
+    print("-------json object begin---------")
+    print(rdata_obj)
+    print("-------json object end---------")
+    action = rdata_obj["action"]
+    
+    if rdata_obj["data"] is not None:
+        print("data in message:",rdata_obj["data"])
+
+    if rdata_obj["data"] is not None and rdata_obj["data"]["category"] is not None:
+        print(rdata_obj["data"]["category"])
+
+    if action == "CREATE_MESSAGE":
+
+        data = rdata_obj["data"]
+        msgid = data["message_id"]
+        typeindata = data["type"]
+        categoryindata = data["category"]
+        userId = data["user_id"]
+        conversationId = data["conversation_id"]
+        dataindata = data["data"]
+
+        realData = base64.b64decode(dataindata)
+
+        MIXIN_WS_API.replayMessage(ws, msgid)
+
+        if 'error' in rdata_obj:
+            return
+
+        if categoryindata == "PLAIN_TEXT":
+            realData = realData.decode('utf-8')
+            print("dataindata",realData)
+            MIXIN_WS_API.sendUserText(ws, conversationId, userId, realData)
+
+
+if __name__ == "__main__":
+
+    mixin_api = MIXIN_API(mixin_config)
+
+    mixin_ws = MIXIN_WS_API(on_message=on_message)
+
+    mixin_ws.run()
+```
+
+Run the app-mini.py, DO NOT forget active the python "virtual environment" before!"
+```bash
+python app.php
+```
+If everything is ok, the following content will be display.
+```bash
+(mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py
+ws open
+-------json object begin---------
+{'id': '1c798948-30eb-11e9-a20e-20c9d08850cd', 'action': 'LIST_PENDING_MESSAGES'}
+-------json object end---------
+```
+
+In [Mixin Messenger](https://mixin.one/),add the bot as your friend,(for example, this bot id is 7000101639) and then send any text!
+
+![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/helloworld.jpeg)
+
+### Source code explanation
+The WebSocket providing full-duplex communication channels over a single TCP connection, It is a persistence connection, so create loop for it.
+```python
+if __name__ == "__main__":
+
+    mixin_api = MIXIN_API(mixin_config)
+    mixin_ws = MIXIN_WS_API(on_message=on_message)
+    mixin_ws.run()
+```
+
+Send the READ message to the server let it knows this message has already been read. If you don't send it,  the bot will receive the duplicated message again after the bot connect to server again!
+
+```python
+        MIXIN_WS_API.replayMessage(ws, msgid)
+```
+The bot reply any TEXT message unchanged.
+```python
+if categoryindata == "PLAIN_TEXT":
+    realData = realData.decode('utf-8')
+    print("dataindata",realData)
+    MIXIN_WS_API.sendUserText(ws, conversationId, userId, realData)    
+```
+
+Not only text messages, images and other type message can be received. You can find message details in [Here](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/).
+
+### End
+Now your bot is running. You can try your idea now, enjoy!
+
+A full code is [here](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app-mini.py)

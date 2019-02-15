@@ -232,7 +232,8 @@ if __name__ == "__main__":
 
 Run the app-mini.py, DO NOT forget active the python "virtual environment" before!"
 ```bash
-python app.php
+(mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py
+...
 ```
 If everything is ok, the following content will be display.
 ```bash
@@ -262,7 +263,7 @@ Send the READ message to the server let it knows this message has already been r
 ```python
         MIXIN_WS_API.replayMessage(ws, msgid)
 ```
-The bot replies the original TEXT message 
+The bot replies the original TEXT message
 ```python
 if categoryindata == "PLAIN_TEXT":
     realData = realData.decode('utf-8')

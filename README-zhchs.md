@@ -30,7 +30,7 @@ sudo add-apt-repository ppa:deadsnakes/ppa
 ```bash
 Press [ENTER] to continue or Ctrl-c to cancel adding it.
 ```
-重新更新一次, 再安装python3.7, python3.7-venv
+重新更新一次apt源, 再安装python3.7, python3.7-venv
 ```bash
 sudo apt update
 sudo apt install python3.7 python3.7-venv
@@ -88,7 +88,6 @@ wenewzha:mixin_labs-python-bot wenewzhang$ ls
 bin		include		lib		pyvenv.cfg
 ```
 
-Once a virtual environment has been created, it can be “activated” using a script in the virtual environment’s binary directory.
 当"虚拟环境"创建成功后，需要激活它, 通过执行bin目录下相应的activate文件完成.
 ```bash
 wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate

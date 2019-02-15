@@ -262,7 +262,7 @@ Send the READ message to the server let it knows this message has already been r
 ```python
         MIXIN_WS_API.replayMessage(ws, msgid)
 ```
-The bot reply any TEXT message unchanged.
+The bot replies the original TEXT message 
 ```python
 if categoryindata == "PLAIN_TEXT":
     realData = realData.decode('utf-8')

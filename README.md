@@ -18,7 +18,7 @@ brew upgrade
 brew install python@3
 ```
 
-on Ubuntu, build python 3.7.2 from source.
+on Ubuntu, install python 3.7.2 from third apt source.
 
 ###
 ```bash
@@ -35,18 +35,43 @@ Press [ENTER] to continue or Ctrl-c to cancel adding it.
 ```bash
 sudo apt update
 sudo apt install python3.7 python3.7-venv
+sudo ln -s /usr/bin/python3.7 /usr/bin/python3
 ```
 
-Check the installation whether success.
-
-on macOS
+Check the installation whether success, you need check python3 and python3-venv.
 ```bash
-python3 -V
+$python3 -V
+Python 3.7.2
 ```
-
-on Ubuntu
 ```bash
-python3.7 -V
+root@n2:~# python3 -m venv -h
+usage: venv [-h] [--system-site-packages] [--symlinks | --copies] [--clear]
+            [--upgrade] [--without-pip] [--prompt PROMPT]
+            ENV_DIR [ENV_DIR ...]
+Creates virtual Python environments in one or more target directories.
+positional arguments:
+  ENV_DIR               A directory to create the environment in.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --system-site-packages
+                        Give the virtual environment access to the system
+                        site-packages dir.
+  --symlinks            Try to use symlinks rather than copies, when symlinks
+                        are not the default for the platform.
+  --copies              Try to use copies rather than symlinks, even when
+                        symlinks are the default for the platform.
+  --clear               Delete the contents of the environment directory if it
+                        already exists, before environment creation.
+  --upgrade             Upgrade the environment directory to use this version
+                        of Python, assuming Python has been upgraded in-place.
+  --without-pip         Skips installing or upgrading pip in the virtual
+                        environment (pip is bootstrapped by default)
+  --prompt PROMPT       Provides an alternative prompt prefix for this
+                        environment.
+
+Once an environment has been created, you may wish to activate it, e.g. by
+sourcing an activate script in its bin directory
 ```
 
 

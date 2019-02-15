@@ -9,7 +9,7 @@ This tutorial will let you know how to write a Mixin Messenger bot in Python 3. 
 You will create a bot in Mixin Messenger to receive user message after read the chapter.
 
 
-### Python 3 setup:
+## Python 3 installation:
 This tutorial is written in Python 3.7.2 So you need to install Python 3.7.2 or above.
 
 on macOS
@@ -19,30 +19,29 @@ brew install python@3
 ```
 
 on Ubuntu, install python 3.7.2 from third apt source.
-
-###
 ```bash
 sudo apt update
 sudo apt install software-properties-common
 sudo add-apt-repository ppa:deadsnakes/ppa
 ```
 
-When prompted press Enter to continue:
+When prompt like below, press Enter to continue:
 ```bash
 Press [ENTER] to continue or Ctrl-c to cancel adding it.
 ```
-
+Update the source and then install python3.7, python3.7-venv
 ```bash
 sudo apt update
 sudo apt install python3.7 python3.7-venv
 sudo ln -s /usr/bin/python3.7 /usr/bin/python3
 ```
 
-Check the installation whether success, you need check python3 and python3-venv.
+Check the installation whether success, you need check both python3 and python3-venv.
 ```bash
-$python3 -V
+$ python3 -V
 Python 3.7.2
 ```
+
 ```bash
 root@n2:~# python3 -m venv -h
 usage: venv [-h] [--system-site-packages] [--symlinks | --copies] [--clear]
@@ -74,8 +73,46 @@ Once an environment has been created, you may wish to activate it, e.g. by
 sourcing an activate script in its bin directory
 ```
 
+## Create mixin_labs-python-bot project
 
-pip3 install flask requests Crypto pycryptodomex websocket-client pyjwt
+You need create project directory, make it as a python's “virtual environments”  and then install the require packages.
+```bash
+mkdir mixin_labs-python-bot
+cd mixin_labs-python-bot
+python3 -m venv ./
+```
+
+You can find some default directories and files.
+```bash
+wenewzha:mixin_labs-python-bot wenewzhang$ ls
+bin		include		lib		pyvenv.cfg
+```
+
+Once a virtual environment has been created, it can be “activated” using a script in the virtual environment’s binary directory.
+```bash
+wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate
+(mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$
+```
+so that “python” or "pip" invoke the virtual environment’s Python interpreter and you can run installed scripts without having to use their full path.
+
+## Install require packages in "virtual environment"
+
+Create the requirement list.
+> requirements.txt
+```txt
+cryptography==2.4.2
+pycparser==2.19
+pycryptodome==3.7.2
+PyJWT==1.7.1
+python-dateutil==2.7.5
+PyYAML==3.13
+requests==2.21.0
+websocket-client==0.54.0
+```
+Use pip to upgrade pip itself, and install require packages.
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 apt install python3-pip

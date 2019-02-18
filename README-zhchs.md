@@ -2,6 +2,8 @@
 [Mixin Network](https://mixin.one) 是一个免费的 极速的端对端加密数字货币交易系统.
 在本章中，你可以按教程在Mixin Messenger中创建一个bot来接收用户消息, 学到如何给机器人转**比特币** 或者 让机器人给你转**比特币**.
 
+[Mixin Network的开发资源汇编](https://github.com/awesome-mixin-network/index_of_Mixin_Network_resource)
+
 ## 课程简介
 1. [创建一个接受消息的机器人](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README-zhchs.md)
 2. [机器人接受比特币并立即退还用户](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2-zhchs.md)

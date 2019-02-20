@@ -123,12 +123,12 @@ wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_config.py
 
 ## Hello, world in Python
 
-### Create you first app in Mixin Network developer dashboard
+### Create your first app in Mixin Network developer dashboard
 You need to create an app in dashboard. This [tutorial](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account) can help you.
 
 ### Generate parameter of your app in dashboard
 After app is created in dashboard, you still need to [generate parameter](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app)
-and write down required content, these content will be written into mixin_config file.
+and write down required content, these content will be written into mixin_config.py file.
 
 ![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/mixin_network-keys.jpg)
 In the folder, create a file: mixin_config.py. Copy the following content into it.
@@ -228,6 +228,9 @@ if __name__ == "__main__":
 ```
 
 Run the app-mini.py, DO NOT forget active the python "virtual environment" before!"
+```bash
+TODO: Bash code for python virtual enviroment
+```
 ```bash
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py
 ...

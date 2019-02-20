@@ -258,7 +258,7 @@ if __name__ == "__main__":
     mixin_ws.run()
 ```
 
-Send the READ message to the server let it knows this message has already been read. If you don't send it,  the bot will receive the duplicated message again after the bot connect to server next time.
+Send a READ operation message to the server let it knows this message has been read. The bot will receive the duplicated message when the bot connected to server again if bot don't send response.
 
 ```python
         MIXIN_WS_API.replayMessage(ws, msgid)
@@ -271,7 +271,7 @@ if categoryindata == "PLAIN_TEXT":
     MIXIN_WS_API.sendUserText(ws, conversationId, userId, realData)    
 ```
 
-Not only text, images and other type message can be received. You can find more [details](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/) about Messenger message.
+Not only texts, images and other type message will be pushed to your bot. You can find more [details](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/) about Messenger message.
 
 ### End
 Now your bot worked. You can hack it now.

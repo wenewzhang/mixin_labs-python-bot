@@ -98,8 +98,8 @@ elif categoryindata == "SYSTEM_ACCOUNT_SNAPSHOT":
     if ( float(rdJs["amount"]) > 0 ):
         mixin_api.transferTo(userId, rdJs["asset_id"], rdJs["amount"], "")
 ```
-rdJs["amount"] is negative if bot sends Bitcoin to user successfully.
-rdJs["amount"] is positive if bot receive Bitcoin from user.
+* rdJs["amount"] is negative if bot sends Bitcoin to user successfully.
+* rdJs["amount"] is positive if bot receive Bitcoin from user.
 Call mixin_api.transferTo to refund the coins back to user.
 
 ## Advanced usage

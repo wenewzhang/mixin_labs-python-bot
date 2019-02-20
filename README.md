@@ -244,7 +244,7 @@ ws open
 -------json object end---------
 ```
 
-Add the bot as your friend in [Mixin Messenger](https://mixin.one/messenger) and send some words(for example, this bot id is 7000101639).
+Add the bot(for example, this bot id is 7000101639) as your friend in [Mixin Messenger](https://mixin.one/messenger) and send your messages.
 
 ![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/helloworld.jpeg)
 

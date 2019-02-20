@@ -1,26 +1,23 @@
-# Mixin Messenger application development tutorial in Python 3
-This tutorial will let you know how to write a Mixin Messenger bot in Python 3. The bot can receive and response to user's message. User can pay Bitcoin to bot and bot can transfer Bitcoin to user immediately.
+# Python Mixin Messenger application development tutorial
+A Mixin messenger bot will be created in this tutorial. The bot is powered by python, it echo message and Bitcoin from user.
 
-[Mixin network resource](https://github.com/awesome-mixin-network/index_of_Mixin_Network_resource)
+Full Mixin network resource index[index](https://github.com/awesome-mixin-network/index_of_Mixin_Network_resource)
 
-## Index
-1. [Create bot and receive message from user](https://github.com/wenewzhang/mixin_labs-python-bot#create-bot-and-receive-message-from-user)
-2. [Receive and send Bitcoin](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2.md)
+## What you will learn from this tutorial
+1. [How to create bot in Mixin messenger and reply message to user](https://github.com/wenewzhang/mixin_labs-python-bot#create-bot-and-receive-message-from-user)
+2. [How to receive Bitcoin and send Bitcoin in Mixin Messenger](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2.md)
 
-## Create bot and receive message from user
-You will create a bot in Mixin Messenger to receive user message after read the chapter.
-
-
+## How to create bot in Mixin messenger and reply message to user
 ## Python 3 installation:
 This tutorial is written in Python 3.7.2 So you need to install Python 3.7.2 or above.
 
-on macOS
+macOS
 ```bash
 brew upgrade
 brew install python@3
 ```
 
-on Ubuntu, install python 3.7.2 from the third apt source.
+Ubuntu, install python 3.7.2 from the third apt source.
 ```bash
 sudo apt update
 sudo apt install software-properties-common
@@ -31,14 +28,14 @@ When prompt like below, press Enter to continue:
 ```bash
 Press [ENTER] to continue or Ctrl-c to cancel adding it.
 ```
-Update the source and then install python3.7, python3.7-venv
+Update the source, then install python3.7, python3.7-venv
 ```bash
 sudo apt update
 sudo apt install python3.7 python3.7-venv
 sudo ln -s /usr/bin/python3.7 /usr/bin/python3
 ```
 
-Check whether the installation is success, you need check both python3 and python3-venv.
+check both python3 and python3-venv are installed
 ```bash
 $ python3 -V
 Python 3.7.2
@@ -77,14 +74,14 @@ sourcing an activate script in its bin directory
 
 ## Create mixin_labs-python-bot project
 
-You need create project directory, make it as a python's “virtual environment”, and then install the required packages.
+You need create project directory, make it as a python's “virtual environment”, and install the required packages.
 ```bash
 mkdir mixin_labs-python-bot
 cd mixin_labs-python-bot
 python3 -m venv ./
 ```
 
-After **python3 -m venv** command finished,  the project directory has data like below:
+Run **python3 -m venv** , following file and folder are created:
 ```bash
 wenewzha:mixin_labs-python-bot wenewzhang$ ls
 bin		include		lib		pyvenv.cfg
@@ -124,14 +121,14 @@ wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_api.py
 wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_config.py
 ```
 
-## Hello, world!
+## Hello, world in Python
 
-### Create you first app in developer dashboard
-Create an app by following [tutorial](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account).
+### Create you first app in Mixin Network developer dashboard
+You need to create an app in dashboard. This [tutorial](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account) can help you.
 
-### Generate parameter for your app
-Remember to [generate parameter](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app)
-and write down required information, they are required in config.php file soon.
+### Generate parameter of your app in dashboard
+After app is created in dashboard, you still need to [generate parameter](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app)
+and write down required content, these content will be written into mixin_config file.
 
 ![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/mixin_network-keys.jpg)
 In the folder, create a file: mixin_config.py. Copy the following content into it.

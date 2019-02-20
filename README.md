@@ -159,9 +159,7 @@ UN0KsG9JPRVNeQR8HnwpAkACrr9cNp1H1bytHG9a6L+5cVHkRhqqEYWVO41MhgZF
 5bIKx5OXCJB2VwY7fjFet2KxTHGfEZt/khjFNZzVX7lN
 -----END RSA PRIVATE KEY-----"""
 ```
-Replace the value with YOUR APP  client_id, client_secret, and the pay_pin, pin token, pay_session_id, private key you have already generated them in dashboard.
-
-Create an app-mini.py file, fill it by the content below:
+Replace the value with content generated in dashboard. Create an app-mini.py file, fill it by the content below:
 > app-mini.py
 ```python
 from mixin_ws_api import MIXIN_WS_API
@@ -234,7 +232,7 @@ Run the app-mini.py, DO NOT forget active the python "virtual environment" befor
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py
 ...
 ```
-If everything is ok, the following content will be display.
+If console output following message, congratulations.
 ```bash
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py
 ws open
@@ -243,12 +241,12 @@ ws open
 -------json object end---------
 ```
 
-In [Mixin Messenger](https://mixin.one/),add the bot as your friend,(for example, this bot id is 7000101639) and then send any text!
+Add the bot as your friend in [Mixin Messenger](https://mixin.one/messenger) and send some words(for example, this bot id is 7000101639).
 
 ![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/helloworld.jpeg)
 
 ### Source code explanation
-The WebSocket providing full-duplex communication channels over a single TCP connection, It is a persistence connection, so create loop for it.
+The code create a websocket client.
 ```python
 if __name__ == "__main__":
 
@@ -257,12 +255,12 @@ if __name__ == "__main__":
     mixin_ws.run()
 ```
 
-Send the READ message to the server let it knows this message has already been read. If you don't send it,  the bot will receive the duplicated message again after the bot connect to server again!
+Send the READ message to the server let it knows this message has already been read. If you don't send it,  the bot will receive the duplicated message again after the bot connect to server next time.
 
 ```python
         MIXIN_WS_API.replayMessage(ws, msgid)
 ```
-The bot replies the original TEXT message
+The bot echo every text from user
 ```python
 if categoryindata == "PLAIN_TEXT":
     realData = realData.decode('utf-8')
@@ -270,9 +268,9 @@ if categoryindata == "PLAIN_TEXT":
     MIXIN_WS_API.sendUserText(ws, conversationId, userId, realData)    
 ```
 
-Not only text messages, images and other type message can be received. You can find message details in [Here](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/).
+Not only text, images and other type message can be received. You can find more [details](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/) about Messenger message.
 
 ### End
-Now your bot is running. You can try your idea now, enjoy!
+Now your bot worked. You can hack it now.
 
-A full code is [here](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app-mini.py)
+Full code is [here](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app-mini.py)

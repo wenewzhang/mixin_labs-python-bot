@@ -274,6 +274,6 @@ if categoryindata == "PLAIN_TEXT":
 Not only texts, images and other type message will be pushed to your bot. You can find more [details](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/) about Messenger message.
 
 ### End
-Now your bot worked. You can hack it now.
+Now your bot worked. You can hack it.
 
 Full code is [here](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app-mini.py)

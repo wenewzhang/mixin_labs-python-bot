@@ -229,7 +229,8 @@ if __name__ == "__main__":
 
 Run the app-mini.py, DO NOT forget active the python "virtual environment" before!"
 ```bash
-TODO: Bash code for python virtual enviroment
+cd mixin_labs-python-bot
+wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate
 ```
 ```bash
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py

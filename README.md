@@ -249,7 +249,7 @@ Add the bot as your friend in [Mixin Messenger](https://mixin.one/messenger) and
 ![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/helloworld.jpeg)
 
 ### Source code explanation
-The code create a websocket client.
+The code creates a websocket client.
 ```python
 if __name__ == "__main__":
 

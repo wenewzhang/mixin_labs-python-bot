@@ -1,4 +1,5 @@
 # Python Mixin Messenger application development tutorial
+![cover](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/Bitcoin_python.jpg)
 A Mixin messenger bot will be created in this tutorial. The bot is powered by python, it echo message and Bitcoin from user.
 
 Full Mixin network resource [index](https://github.com/awesome-mixin-network/index_of_Mixin_Network_resource)

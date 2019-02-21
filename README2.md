@@ -1,8 +1,7 @@
 In [the previous chapter](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README.md), we created our first app, when user sends "Hello,world!", the bot reply the same message.
 
-# Receive and send Bitcoin
-This chapter will show you that your bot can receive coin from user and then pay it back to the user immediately.
-The full code is below:
+# Receive and send Bitcoin in Mixin Messenger
+
 > app.py
 ```python
 from mixin_ws_api import MIXIN_WS_API
@@ -92,16 +91,16 @@ Developer can send Bitcoin to their bots in message panel. The bot receive the B
 User can pay 0.001 Bitcoin to bot by click the button and the 0.001 Bitcoin will be refunded in 1 second,In fact, user can pay any coin either.
 ![pay-link](https://github.com/wenewzhang/mixin_network-nodejs-bot2/blob/master/Pay_and_refund_quickly.jpg)
 
-## Source code explanation
+## Source code summary
 ```python
 elif categoryindata == "SYSTEM_ACCOUNT_SNAPSHOT":
     rdJs = json.loads(realData)
     if ( float(rdJs["amount"]) > 0 ):
         mixin_api.transferTo(userId, rdJs["asset_id"], rdJs["amount"], "")
 ```
-When bot sends Bitcoin to user successfully, the rdJs["amount"] is negative.
-When users send Bitcoin to bot, the rdJs["amount"] is positive.
-The last, call mixin_api.transferTo to refund the coins back to user.
+* rdJs["amount"] is negative if bot sends Bitcoin to user successfully.
+* rdJs["amount"] is positive if bot receive Bitcoin from user.
+Call mixin_api.transferTo to refund the coins back to user.
 
 ## Advanced usage
 coming soon!

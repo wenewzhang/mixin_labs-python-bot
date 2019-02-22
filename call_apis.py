@@ -7,7 +7,7 @@ import csv
 PIN             = "945689";
 MASTER_ID       = "37222956";
 MASTER_UUID     = "0b4f49dc-8fb4-4539-9a89-fb3afc613747";
-BTC_ASSET_ID    = "965e5c6e-434c-3fa9-b780-c50f43cd955c";
+BTC_ASSET_ID    = "c6d0c728-2624-429b-8e0d-d9d19b6592fa";
 EOS_ASSET_ID    = "6cfe566e-4aad-470b-8c9a-2fd35b49c68d";
 BTC_WALLET_ADDR = "14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C";
 AMOUNT          = "0.001";
@@ -75,6 +75,7 @@ def readAssetAddress(asset_id,isBTC = True):
                                                         userid,
                                                         pin,"")
             btcInfo = mixinApiNewUserInstance.getAsset(asset_id)
+            print(btcInfo)
             if isBTC:
                 print("Account %s \'s Bitcoin wallet address is %s  " %(userid,btcInfo.get("data").get("public_key")))
             else:
@@ -113,13 +114,6 @@ while ( 1 > 0 ):
                                 userInfo.get("data").get("session_id"),
                                 userInfo.get("data").get("user_id"),
                                 PIN])
-            mixinApiNewUserInstance = generateMixinAPI(private_key.decode(),
-                                userInfo.get("data").get("pin_token"),
-                                userInfo.get("data").get("session_id"),
-                                userInfo.get("data").get("user_id"),
-                                PIN,"")
-            btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-            print(btcInfo)
     if ( cmd == '2' ):
         print("Read Bitcoin(uuid:%s) balance" %(BTC_ASSET_ID))
         readAssetBalance(BTC_ASSET_ID)

@@ -6,6 +6,7 @@ import csv
 
 PIN             = "945689";
 MASTER_ID       = "37222956";
+MASTER_UUID     = "0b4f49dc-8fb4-4539-9a89-fb3afc613747";
 BTC_ASSET_ID    = "965e5c6e-434c-3fa9-b780-c50f43cd955c";
 EOS_ASSET_ID    = "6cfe566e-4aad-470b-8c9a-2fd35b49c68d";
 BTC_WALLET_ADDR = "14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C";
@@ -139,4 +140,18 @@ while ( 1 > 0 ):
                 userid  = row.pop()
                 mixinApiBotInstance.transferTo(userid, BTC_ASSET_ID, AMOUNT, "")
     if ( cmd == '7' ):
-        mixinApiBotInstance.SearchUser(MASTER_ID)
+        with open('new_users.csv', newline='') as csvfile:
+            reader  = csv.reader(csvfile)
+            for row in reader:
+                pin         = row.pop()
+                userid      = row.pop()
+                session_id  = row.pop()
+                pin_token   = row.pop()
+                private_key = row.pop()
+                mixinApiNewUserInstance = generateMixinAPI(private_key,
+                                                            pin_token,
+                                                            session_id,
+                                                            userid,
+                                                            pin,"")
+                btcInfo = mixinApiBotInstance.transferTo(MASTER_UUID, BTC_ASSET_ID, AMOUNT, "")
+                print(btcInfo)

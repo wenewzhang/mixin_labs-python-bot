@@ -233,7 +233,7 @@ class MIXIN_API:
     """
     Read user's all assets.
     """
-    def getMyAssets(self, auth_token):
+    def getMyAssets(self, auth_token=""):
 
         return self.__genGetRequest('/assets', auth_token)
 
@@ -285,7 +285,7 @@ class MIXIN_API:
     """
     Search user by Mixin ID or Phone Number.
     """
-    def SearchUser(self, q, auth_token):
+    def SearchUser(self, q, auth_token=""):
         return self.__genGetRequest('/search/' + q, auth_token)
 
     """

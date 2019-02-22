@@ -198,7 +198,6 @@ class MIXIN_API:
 
         r = requests.get(url, headers={"Authorization": "Bearer " + auth_token})
         result_obj = r.json()
-        print(result_obj)
         return result_obj
 
 

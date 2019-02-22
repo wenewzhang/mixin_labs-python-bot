@@ -216,11 +216,18 @@ class MIXIN_API:
         if auth_token == "":
             token = self.genPOSTJwtToken(path, body_in_json, str(uuid.uuid4()))
             auth_token = token.decode('utf8')
-
+        headers = {
+            'Content-Type'  : 'application/json',
+            'Authorization' : 'Bearer ' + auth_token,
+        }
         # generate url
         url = self.__genUrl(path)
 
-        r = requests.post(url, json=body, headers={"Authorization": "Bearer " + auth_token})
+        r = requests.post(url, json=body, headers=headers)
+# {'error': {'status': 202, 'code': 20118, 'description': 'Invalid PIN format.'}}
+
+        # r = requests.post(url, data=body, headers=headers)
+# {'error': {'status': 202, 'code': 401, 'description': 'Unauthorized, maybe invalid token.'}}
         result_obj = r.json()
         print(result_obj)
         return result_obj
@@ -338,10 +345,12 @@ class MIXIN_API:
     if auth_token is empty, it create robot' pin.
     if auth_token is set, it create messenger user pin.
     """
-    def createPin(self, new_pin, old_pin="", auth_token=""):
+    def updatePin(self, new_pin, old_pin="", auth_token=""):
+        enPin = self.genEncrypedPin(new_pin)
+        print(enPin.decode())
         body = {
             "old_pin": old_pin,
-            "pin": new_pin
+            "pin": enPin.decode()
         }
 
         return self.__genNetworkPostRequest('/pin/update', body, auth_token)

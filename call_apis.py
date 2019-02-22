@@ -114,6 +114,13 @@ while ( 1 > 0 ):
                                 userInfo.get("data").get("session_id"),
                                 userInfo.get("data").get("user_id"),
                                 PIN])
+        mixinApiNewUserInstance = generateMixinAPI(private_key.decode(),
+                                                    userInfo.get("data").get("pin_token"),
+                                                    userInfo.get("data").get("session_id"),
+                                                    userInfo.get("data").get("user_id"),
+                                                    PIN,"")
+        pinInfo = mixinApiNewUserInstance.createPin(PIN,"")
+        print(pinInfo)
     if ( cmd == '2' ):
         print("Read Bitcoin(uuid:%s) balance" %(BTC_ASSET_ID))
         readAssetBalance(BTC_ASSET_ID)

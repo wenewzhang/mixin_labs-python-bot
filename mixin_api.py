@@ -88,7 +88,7 @@ class MIXIN_API:
         encoded = jwt.encode({'uid':self.client_id, 'sid':self.pay_session_id,'iat':iat,'exp': exp, 'jti':jti,'sig':jwtSig}, self.private_key, algorithm='RS512')
         return encoded
 
-    def genEncrypedPin(self, iterString = none):
+    def genEncrypedPin(self, iterString = None):
         if self.keyForAES == "":
             privKeyObj = RSA.importKey(self.private_key)
 
@@ -113,7 +113,7 @@ class MIXIN_API:
         tsthree = chr(tsthree)
 
         tsstring = tszero + tsone + tstwo + tsthree + '\0\0\0\0'
-        if iterString == none:
+        if iterString is None:
             toEncryptContent = self.pay_pin + tsstring + tsstring
         else:
             toEncryptContent = self.pay_pin + tsstring + iterString
@@ -206,6 +206,7 @@ class MIXIN_API:
     """
     generate Mixin Network POST http request
     """
+    # TODO: request
     def __genNetworkPostRequest(self, path, body, auth_token=""):
 
         # transfer obj => json string
@@ -340,7 +341,7 @@ class MIXIN_API:
     def createPin(self, new_pin, old_pin="", auth_token=""):
         body = {
             "old_pin": old_pin,
-            "new_pin": new_pin
+            "pin": new_pin
         }
 
         return self.__genNetworkPostRequest('/pin/update', body, auth_token)

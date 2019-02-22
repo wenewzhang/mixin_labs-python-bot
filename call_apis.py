@@ -17,7 +17,7 @@ def pubkeyContent(inputContent):
     contentWithoutReturn = contentWithoutTail[:64] + contentWithoutTail[65:129] + contentWithoutTail[130:194] + contentWithoutTail[195:]
     return contentWithoutReturn
 
-mixin_api = MIXIN_API(mixin_config)
+mixinApiBotInstance = MIXIN_API(mixin_config)
 
 PromptMsg  = "1: Create user and update PIN\n2: Read Bitcoin balance \n3: Read Bitcoin Address\n4: Read EOS balance\n"
 PromptMsg += "5: Read EOS address\n6: Transfer Bitcoin from bot to new user\n7: Transfer Bitcoin from new user to Master\n"
@@ -37,7 +37,7 @@ while ( 1 > 0 ):
         session_key = pubkeyContent(pubkey.exportKey())
         # print(session_key)
         print(session_key.decode())
-        userInfo = mixin_api.createUser(session_key.decode(),"Tom Bot")
+        userInfo = mixinApiBotInstance.createUser(session_key.decode(),"Tom Bot")
         print(userInfo.get("data").get("user_id"))
         with open('new_users.csv', 'a', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
@@ -46,5 +46,16 @@ while ( 1 > 0 ):
                                 userInfo.get("data").get("session_id"),
                                 userInfo.get("data").get("user_id"),
                                 PIN])
+            mixin_config.private_key       = private_key.decode()
+            mixin_config.pin_token         = userInfo.get("data").get("pin_token")
+            mixin_config.pay_session_id    = userInfo.get("data").get("session_id")
+            mixin_config.client_id         = userInfo.get("data").get("user_id")
+            mixin_config.client_secret     = ""
+            mixin_config.pay_pin           = PIN
+            mixinApiNewUserInstance        = MIXIN_API(mixin_config)
+            btcInfo                        = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
+            print(btcInfo)
     if ( cmd == '2' ):
         print("read bitcoin balance")
+        btcInfo = mixinApiBotInstance.getAsset(BTC_ASSET_ID)
+        print(btcInfo)

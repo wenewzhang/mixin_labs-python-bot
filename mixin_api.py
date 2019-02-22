@@ -88,7 +88,7 @@ class MIXIN_API:
         encoded = jwt.encode({'uid':self.client_id, 'sid':self.pay_session_id,'iat':iat,'exp': exp, 'jti':jti,'sig':jwtSig}, self.private_key, algorithm='RS512')
         return encoded
 
-    def genEncrypedPin(self):
+    def genEncrypedPin(self, iterString = none):
         if self.keyForAES == "":
             privKeyObj = RSA.importKey(self.private_key)
 
@@ -113,8 +113,10 @@ class MIXIN_API:
         tsthree = chr(tsthree)
 
         tsstring = tszero + tsone + tstwo + tsthree + '\0\0\0\0'
-
-        toEncryptContent = self.pay_pin + tsstring + tsstring
+        if iterString == none:
+            toEncryptContent = self.pay_pin + tsstring + tsstring
+        else:
+            toEncryptContent = self.pay_pin + tsstring + iterString
 
         lenOfToEncryptContent = len(toEncryptContent)
         toPadCount = 16 - lenOfToEncryptContent % 16

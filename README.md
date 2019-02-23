@@ -117,9 +117,9 @@ pip install -r requirements.txt
 
 ## Download the mixin-network api.
 ```bash
-wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_ws_api.py
-wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_api.py
-wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_config.py
+wget https://github.com/wenewzhang/mixin-python3-sdk/raw/master/mixin_ws_api.py
+wget https://github.com/wenewzhang/mixin-python3-sdk/raw/master/mixin_api.py
+wget https://github.com/wenewzhang/mixin-python3-sdk/raw/master/mixin_config.py
 ```
 
 ## Hello, world in Python

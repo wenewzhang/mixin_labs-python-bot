@@ -123,7 +123,6 @@ while ( 1 > 0 ):
                                                     PIN,"")
         pinInfo = mixinApiNewUserInstance.updatePin(PIN,"")
         print(pinInfo)
-        time.sleep(3)
         mixinApiNewUserInstance.pay_pin = PIN
         pinInfo2 = mixinApiNewUserInstance.verifyPin()
         print(pinInfo2)

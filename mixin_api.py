@@ -345,29 +345,33 @@ class MIXIN_API:
     if auth_token is empty, it create robot' pin.
     if auth_token is set, it create messenger user pin.
     """
-    def updatePin(self, new_pin, old_pin="", auth_token=""):
-        enPin = self.genEncrypedPin(new_pin)
+    def updatePin(self, new_pin, old_pin, auth_token=""):
+        old_inside_pay_pin = self.pay_pin
+        self.pay_pin = new_pin
+        newEncrypedPin = self.genEncrypedPin()
         if old_pin == "":
-            enOldPin = ""
+            body = {
+                "old_pin": "",
+                "pin": newEncrypedPin.decode()
+            }
         else:
-            enOldPin = (self.genEncrypedPin(old_pin)).decode()
-        print(enPin.decode())
-        print(enOldPin)
-        body = {
-            "old_pin": enOldPin,
-            "pin": enPin.decode()
-        }
 
+            self.pay_pin = old_pin
+            oldEncryptedPin = self.genEncrypedPin()
+            body = {
+                "old_pin": oldEncryptedPin.decode(),
+                "pin": newEncrypedPin.decode()
+            }
+        self.pay_pin = old_inside_pay_pin
         return self.__genNetworkPostRequest('/pin/update', body, auth_token)
-
 
     """
     Verify PIN if is valid or not. For example, you can verify PIN before updating it.
     if auth_token is empty, it verify robot' pin.
     if auth_token is set, it verify messenger user pin.
     """
-    def verifyPin(self, pin, auth_token=""):
-        enPin = self.genEncrypedPin(pin)
+    def verifyPin(self, auth_token=""):
+        enPin = self.genEncrypedPin()
         body = {
             "pin": enPin.decode()
         }

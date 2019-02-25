@@ -24,12 +24,14 @@ def on_message(ws, message):
     print(rdata_obj)
     print("-------json object end---------")
     action = rdata_obj["action"]
+    if action == "ERROR":
+        return;
 
-    if rdata_obj["data"] is not None:
-        print("data in message:",rdata_obj["data"])
-
-    if rdata_obj["data"] is not None and rdata_obj["data"]["category"] is not None:
-        print(rdata_obj["data"]["category"])
+    # if rdata_obj["data"] is not None:
+    #     print("data in message:",rdata_obj["data"])
+    #
+    # if rdata_obj["data"] is not None and rdata_obj["data"]["category"] is not None:
+    #     print(rdata_obj["data"]["category"])
 
     if action == "CREATE_MESSAGE":
 

@@ -347,9 +347,14 @@ class MIXIN_API:
     """
     def updatePin(self, new_pin, old_pin="", auth_token=""):
         enPin = self.genEncrypedPin(new_pin)
+        if old_pin == "":
+            enOldPin = ""
+        else:
+            enOldPin = (self.genEncrypedPin(old_pin)).decode()
         print(enPin.decode())
+        print(enOldPin)
         body = {
-            "old_pin": old_pin,
+            "old_pin": enOldPin,
             "pin": enPin.decode()
         }
 
@@ -362,9 +367,9 @@ class MIXIN_API:
     if auth_token is set, it verify messenger user pin.
     """
     def verifyPin(self, pin, auth_token=""):
-
+        enPin = self.genEncrypedPin(pin)
         body = {
-            "pin": pin
+            "pin": enPin.decode()
         }
 
         return self.__genNetworkPostRequest('/pin/verify', body, auth_token)
@@ -401,18 +406,32 @@ class MIXIN_API:
     """
     Create an address for withdrawal, you can only withdraw through an existent address.
     """
-    def createAddress(self, asset_id, public_key="", label="", account_name="", account_tag=""):
+    def createAddress(self, asset_id, public_key, label, isEOS=False):
 
         encrypted_pin = self.genEncrypedPin()
-        body = {
-            "asset_id": asset_id,
-            "pin": encrypted_pin,
-            "public_key": public_key,
-            "label": label,
-            "account_name": account_name,
-            "account_tag": account_tag
-        }
-
+        # body = {
+        #     "asset_id": asset_id,
+        #     "pin": encrypted_pin,
+        #     "public_key": public_key,
+        #     "label": label,
+        #     "account_name": account_name,
+        #     "account_tag": account_tag
+        # }
+        if ( isEOS is False):
+            body = {
+                'asset_id'   : asset_id,
+                'public_key' : public_key,
+                'label'      : label,
+                'pin'        : encrypted_pin.decode(),
+            };
+        else:
+            body = {
+                'asset_id'     : asset_id,
+                'account_name' : label,
+                'account_tag'  : public_key,
+                'pin'          : encrypted_pin.decode(),
+            };
+        print(body)
         return self.__genNetworkPostRequest('/addresses/', body)
 
 

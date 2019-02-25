@@ -5,6 +5,7 @@ import json
 import csv
 
 PIN             = "945689";
+PIN2            = "845689";
 MASTER_ID       = "37222956";
 MASTER_UUID     = "0b4f49dc-8fb4-4539-9a89-fb3afc613747";
 BTC_ASSET_ID    = "c6d0c728-2624-429b-8e0d-d9d19b6592fa";
@@ -121,6 +122,8 @@ while ( 1 > 0 ):
                                                     PIN,"")
         pinInfo = mixinApiNewUserInstance.updatePin(PIN,"")
         print(pinInfo)
+        pinInfo2 = mixinApiNewUserInstance.verifyPin(PIN)
+        print(pinInfo2)
     if ( cmd == '2' ):
         print("Read Bitcoin(uuid:%s) balance" %(BTC_ASSET_ID))
         readAssetBalance(BTC_ASSET_ID)
@@ -155,4 +158,21 @@ while ( 1 > 0 ):
                                                             userid,
                                                             pin,"")
                 btcInfo = mixinApiBotInstance.transferTo(MASTER_UUID, BTC_ASSET_ID, AMOUNT, "")
+                print(btcInfo)
+    if ( cmd == '8' ):
+        with open('new_users.csv', newline='') as csvfile:
+            reader  = csv.reader(csvfile)
+            for row in reader:
+                pin         = row.pop()
+                userid      = row.pop()
+                session_id  = row.pop()
+                pin_token   = row.pop()
+                private_key = row.pop()
+                print(pin)
+                mixinApiNewUserInstance = generateMixinAPI(private_key,
+                                                            pin_token,
+                                                            session_id,
+                                                            userid,
+                                                            pin,"")
+                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC")
                 print(btcInfo)

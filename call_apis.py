@@ -176,8 +176,9 @@ while ( 1 > 0 ):
                                                             session_id,
                                                             userid,
                                                             pin,"")
-                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC")
+                btcInfo = mixinApiNewUserInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC")
                 print(btcInfo)
+                print(btcInfo['data']['address_id'])
     if ( cmd == 'a' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

@@ -431,33 +431,18 @@ class MIXIN_API:
     """
     Create an address for withdrawal, you can only withdraw through an existent address.
     """
-    def createAddress(self, asset_id, public_key, label, isEOS=False):
+    def createAddress(self, asset_id, public_key = "", label = "", account_name = "", account_tag = ""):
 
-        encrypted_pin = self.genEncrypedPin()
-        # body = {
-        #     "asset_id": asset_id,
-        #     "pin": encrypted_pin,
-        #     "public_key": public_key,
-        #     "label": label,
-        #     "account_name": account_name,
-        #     "account_tag": account_tag
-        # }
-        if ( isEOS is False):
-            body = {
-                'asset_id'   : asset_id,
-                'public_key' : public_key,
-                'label'      : label,
-                'pin'        : encrypted_pin.decode(),
-            };
-        else:
-            body = {
-                'asset_id'     : asset_id,
-                'account_name' : label,
-                'account_tag'  : public_key,
-                'pin'          : encrypted_pin.decode(),
-            };
+        body = {
+            "asset_id": asset_id,
+            "pin": self.genEncrypedPin().decode(),
+            "public_key": public_key,
+            "label": label,
+            "account_name": account_name,
+            "account_tag": account_tag,
+        }
         print(body)
-        return self.__genNetworkPostRequest('/addresses/', body)
+        return self.__genNetworkPostRequest('/addresses', body)
 
 
     """

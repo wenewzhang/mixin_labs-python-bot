@@ -450,7 +450,7 @@ class MIXIN_API:
     """
     def delAddress(self, address_id):
 
-        encrypted_pin = self.genEncrypedPin()
+        encrypted_pin = self.genEncrypedPin().decode()
 
         body = {"pin": encrypted_pin}
 
@@ -461,7 +461,7 @@ class MIXIN_API:
     Read an address by ID.
     """
     def getAddress(self, address_id):
-        return self.__genNetworkGetRequest('/addresses' + address_id)
+        return self.__genNetworkGetRequest('/addresses/' + address_id)
 
     """
     Transfer of assets between Mixin Network users.

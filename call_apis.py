@@ -91,7 +91,7 @@ mixinApiBotInstance = MIXIN_API(mixin_config)
 
 PromptMsg  = "1: Create user and update PIN\n2: Read Bitcoin balance \n3: Read Bitcoin Address\n4: Read EOS balance\n"
 PromptMsg += "5: Read EOS address\n6: Transfer Bitcoin from bot to new account\n7: Transfer Bitcoin from new account to Master\n"
-PromptMsg += "8: Withdraw bot's Bitcoin\na:Verify Pin\n"
+PromptMsg += "8: Withdraw bot's Bitcoin\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
 PromptMsg += "9: Exit \nMake your choose:"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
@@ -123,7 +123,8 @@ while ( 1 > 0 ):
                                                     PIN,"")
         pinInfo = mixinApiNewUserInstance.updatePin(PIN,"")
         print(pinInfo)
-        mixinApiNewUserInstance.pay_pin = PIN
+        time.sleep(3)
+        # mixinApiNewUserInstance.pay_pin = PIN
         pinInfo2 = mixinApiNewUserInstance.verifyPin()
         print(pinInfo2)
     if ( cmd == '2' ):
@@ -176,9 +177,9 @@ while ( 1 > 0 ):
                                                             session_id,
                                                             userid,
                                                             pin,"")
-                btcInfo = mixinApiNewUserInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC")
+                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
+                mixinApiBotInstance.withdrawals(btcInfo.get("data").get("address_id"),AMOUNT,"")
                 print(btcInfo)
-                print(btcInfo['data']['address_id'])
     if ( cmd == 'a' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)
@@ -196,3 +197,43 @@ while ( 1 > 0 ):
                                                             pin,"")
                 btcInfo = mixinApiNewUserInstance.verifyPin()
                 print(btcInfo)
+    if ( cmd == 'd' ):
+        with open('new_users.csv', newline='') as csvfile:
+            reader  = csv.reader(csvfile)
+            for row in reader:
+                pin         = row.pop()
+                userid      = row.pop()
+                session_id  = row.pop()
+                pin_token   = row.pop()
+                private_key = row.pop()
+                print(pin)
+                mixinApiNewUserInstance = generateMixinAPI(private_key,
+                                                            pin_token,
+                                                            session_id,
+                                                            userid,
+                                                            pin,"")
+                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
+                addr_id = btcInfo.get("data").get("address_id")
+                print(addr_id)
+                delInfo = mixinApiBotInstance.delAddress(addr_id)
+                print(delInfo)
+    if ( cmd == 'r' ):
+        with open('new_users.csv', newline='') as csvfile:
+            reader  = csv.reader(csvfile)
+            for row in reader:
+                pin         = row.pop()
+                userid      = row.pop()
+                session_id  = row.pop()
+                pin_token   = row.pop()
+                private_key = row.pop()
+                print(pin)
+                mixinApiNewUserInstance = generateMixinAPI(private_key,
+                                                            pin_token,
+                                                            session_id,
+                                                            userid,
+                                                            pin,"")
+                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
+                addr_id = btcInfo.get("data").get("address_id")
+                print(addr_id)
+                addrInfo = mixinApiBotInstance.getAddress(addr_id)
+                print(addrInfo)

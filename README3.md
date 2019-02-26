@@ -4,6 +4,7 @@ We have created a bot to [echo message](https://github.com/wenewzhang/mixin_labs
 1. How to create Bitcoin wallet
 2. How to read Bitcoin balance
 3. How to send Bitcoin with zero transaction fee and confirmed in 1 second
+4. How to send Bitcoin to other wallet
 
 ## Create a Bitcoin wallet by Mixin Network Python SDK
 Pre-request: You should have a Mixin Network account. Create an account can be done by one line code:
@@ -22,7 +23,13 @@ userInfo.get("data").get("user_id"),
 
 Result of createUser is:
 ```python
-{'data': {'type': 'user', 'user_id': '2f25b669-15e7-392c-a1d5-fe7ba43bdf37', 'identity_number': '0', 'full_name': 'Tom Bot', 'avatar_url': '', 'relationship': '', 'mute_until': '0001-01-01T00:00:00Z', 'created_at': '2019-02-22T06:23:41.754573722Z', 'is_verified': False, 'session_id': '284c7b39-3284-4cf6-9354-87df30ec7d57', 'phone': '', 'pin_token': 'g4upUgBXa8ATk7yxL6B94HgI4GV4sG4t8Wyn6uTu2Q2scH11UMQ5bYDb6Md+3LRQqRjEdRFcLlHijXGBihRweTaKTZjHQqolWbZcffesVIias6WppV/QMu4TzXCuKa5xpj3uhjL+yPyfWTLGUaVJTJN9n7PQmHSIUBXrovbfodk=', 'invitation_code': '', 'code_id': '', 'code_url': '', 'has_pin': False, 'receive_message_source': 'EVERYBODY', 'accept_conversation_source': 'EVERYBODY'}}
+{'data': {'type': 'user', 'user_id': '2f25b669-15e7-392c-a1d5-fe7ba43bdf37', 'identity_number': '0',
+'full_name': 'Tom Bot', 'avatar_url': '', 'relationship': '', 'mute_until': '0001-01-01T00:00:00Z',
+'created_at': '2019-02-22T06:23:41.754573722Z', 'is_verified': False,
+'session_id': '284c7b39-3284-4cf6-9354-87df30ec7d57', 'phone': '',
+'pin_token':'g4upUgBXa8ATk7yxL6B94HgI4GV4sG4t8Wyn6uTu2Q2scH11UMQ5bYDb6Md+3LRQqRjEdRFcLlHijXGBihRweTaKTZjHQqolWbZcffesVIias6WppV/QMu4TzXCuKa5xpj3uhjL+yPyfWTLGUaVJTJN9n7PQmHSIUBXrovbfodk=',
+'invitation_code': '', 'code_id': '', 'code_url': '', 'has_pin': False,
+'receive_message_source': 'EVERYBODY', 'accept_conversation_source': 'EVERYBODY'}}
 ```
 
 Now you need to carefully keep the account information. You need these information to read asset balance and other content.
@@ -54,7 +61,13 @@ def readAssetAddress(asset_id,isBTC = True):
 ```
 You can found information about Bitcoin asset in the account. Public key is the Bitcoin deposit address. Full response of read  Bitcoin asset is
 ```python
-{'data': {'type': 'asset', 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'chain_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'symbol': 'BTC', 'name': 'Bitcoin', 'icon_url': 'https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128', 'balance': '0', 'public_key': '1AYAMaRi3j5rXoFLmhJBFxvUEgGt8zeF4k', 'account_name': '', 'account_tag': '', 'price_btc': '1', 'price_usd': '3979.12975801', 'change_btc': '0', 'change_usd': '-0.0018925165548280905', 'asset_key': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'confirmations': 12, 'capitalization': 0}}
+{'data': {'type': 'asset', 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa',
+'chain_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'symbol': 'BTC', 'name': 'Bitcoin',
+'icon_url': 'https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128', 'balance': '0',
+'public_key': '1AYAMaRi3j5rXoFLmhJBFxvUEgGt8zeF4k', 'account_name': '', 'account_tag': '',
+'price_btc': '1', 'price_usd': '3979.12975801', 'change_btc': '0',
+'change_usd': '-0.0018925165548280905', 'asset_key': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa',
+'confirmations': 12, 'capitalization': 0}}
 ```
 The API provide many information about Bitcoin asset.
 * Deposit address:[public_key]
@@ -94,7 +107,15 @@ Create other asset wallet is same as create Bitcoin wallet, just read the asset.
 If you read EOS deposit address, the deposit address is composed of two parts: account_name and account tag. When you transfer EOS token to your account in Mixin network, you should fill both account name and memo. The memo content is value of 'account_tag'.
 Result of read EOS asset is:
 ```python
-{'data': {'type': 'asset', 'asset_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d', 'chain_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d', 'symbol': 'EOS', 'name': 'EOS', 'icon_url': 'https://images.mixin.one/a5dtG-IAg2IO0Zm4HxqJoQjfz-5nf1HWZ0teCyOnReMd3pmB8oEdSAXWvFHt2AJkJj5YgfyceTACjGmXnI-VyRo=s128', 'balance': '0', 'public_key': '', 'account_name': 'eoswithmixin', 'account_tag': '185b27f83d76dad3033ee437195aac11', 'price_btc': '0.00096903', 'price_usd': '3.8563221', 'change_btc': '0.00842757579765049', 'change_usd': '0.0066057628802373095', 'asset_key': 'eosio.token:EOS', 'confirmations': 64, 'capitalization': 0}}
+{'data': {'type': 'asset', 'asset_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d',
+'chain_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d',
+'symbol': 'EOS', 'name': 'EOS',
+'icon_url': 'https://images.mixin.one/a5dtG-IAg2IO0Zm4HxqJoQjfz-5nf1HWZ0teCyOnReMd3pmB8oEdSAXWvFHt2AJkJj5YgfyceTACjGmXnI-VyRo=s128',
+'balance': '0', 'public_key': '',
+'account_name': 'eoswithmixin', 'account_tag': '185b27f83d76dad3033ee437195aac11',
+'price_btc': '0.00096903', 'price_usd': '3.8563221', 'change_btc': '0.00842757579765049',
+'change_usd': '0.0066057628802373095', 'asset_key': 'eosio.token:EOS',
+'confirmations': 64, 'capitalization': 0}}
 ```
 
 ### Deposit Bitcoin and read balance
@@ -156,7 +177,12 @@ print(btcInfo)
 ```
 The **14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C** is a Bitcoin wallet address, Output like below, The API result contains the withdrawal address ID, fee is 0.0034802 BTC.                                                   
 ```python
-{'data': {'type': 'address', 'address_id': '47998e2f-2761-45ce-9a6c-6f167b20c78b', 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'public_key': '14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C', 'label': 'BTC', 'account_name': '', 'account_tag': '', 'fee': '0.0034802', 'reserve': '0', 'dust': '0.0001', 'updated_at': '2019-02-26T00:03:05.028140704Z'}}
+{'data': {'type': 'address', 'address_id': '47998e2f-2761-45ce-9a6c-6f167b20c78b',
+'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa',
+'public_key': '14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C', 'label': 'BTC',
+'account_name': '', 'account_tag': '',
+'fee': '0.0034802', 'reserve': '0', 'dust': '0.0001',
+'updated_at': '2019-02-26T00:03:05.028140704Z'}}
 ```
 
 

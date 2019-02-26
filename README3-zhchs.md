@@ -178,7 +178,7 @@ BTC_WALLET_ADDR = "14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C";
 btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
 print(btcInfo)
 ```
- 这里的 **14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C** 就是一个比特币钱包地址, 如下所示，提现费用是0.0025738 BTC, address_id  是"345855b5-56a5-4f3b-ba9e-d99601ef86c1".                                                   
+ 这里的 **14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C** 就是一个比特币钱包地址, 如下所示，提现费用是0.0034802 BTC, address_id  是"345855b5-56a5-4f3b-ba9e-d99601ef86c1".                                                   
  ```python
  {'data': {'type': 'address',
  'address_id': '47998e2f-2761-45ce-9a6c-6f167b20c78b',

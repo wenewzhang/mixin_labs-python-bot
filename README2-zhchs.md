@@ -104,4 +104,27 @@ elif categoryindata == "SYSTEM_ACCOUNT_SNAPSHOT":
 最后一步，调用SDK的 mixin_api.transferTo 将币返还用户！
 
 ## 高级用法
-coming soon!
+#### APP_BUTTON_GROUP
+在一些应用场景，比如：有一个交易所想提供换币服务，将比特币换成以太坊，EOS,比特币现金等,
+你想显示给用户一组按钮，它们分别代表不同的币与不同的数量,APP_BUTTON_GROUP可以帮你做到这一点.
+```python
+print('send a link APP_BUTTON_GROUP')
+btnBTC    = MIXIN_WS_API.packButton(mixin_config.client_id, BTC_ASSET_ID, "0.0001","BTC pay")
+btnEOS    = MIXIN_WS_API.packButton(mixin_config.client_id, EOS_ASSET_ID, "0.01","EOS pay","#0080FF")
+buttons   = [btnBTC,btnEOS]
+MIXIN_WS_API.sendAppButtonGroup(ws, conversationId, userId, buttons)
+```
+这里演示给用户BTC与EOS两种，你还可以增加更多的按钮.
+
+#### APP_CARD
+如果你觉得一组按钮太单调了，可以试一下APP_CARD,它提供一个图标的链接
+```python
+print('send a link APP_CARD')
+MIXIN_WS_API.sendAppCard(ws, conversationId, mixin_config.client_id,
+                        BTC_ASSET_ID, "0.0001",
+                        "https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128",
+                        "Pay BTC 0.0001","topay")
+```
+![APP_CARD](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app_card.jpg)
+
+[Full source code](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app.py)

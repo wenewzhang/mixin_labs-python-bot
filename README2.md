@@ -114,7 +114,7 @@ btnEOS    = MIXIN_WS_API.packButton(mixin_config.client_id, EOS_ASSET_ID, "0.01"
 buttons   = [btnBTC,btnEOS]
 MIXIN_WS_API.sendAppButtonGroup(ws, conversationId, userId, buttons)
 ```
-here show clients two buttons for EOS and BTC, you can add more buttons as this way.
+Here show clients two buttons for EOS and BTC, you can add more buttons in this way.
 
 #### APP_CARD
 Maybe a group of buttons too simple for you, try a pay link which show a icon: APP_CARD.
@@ -126,3 +126,5 @@ MIXIN_WS_API.sendAppCard(ws, conversationId, mixin_config.client_id,
                         "Pay BTC 0.0001","topay")
 ```
 ![APP_CARD](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app_card.jpg)
+
+[Full source code](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app.py)

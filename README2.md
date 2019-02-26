@@ -103,6 +103,7 @@ elif categoryindata == "SYSTEM_ACCOUNT_SNAPSHOT":
 Call mixin_api.transferTo to refund the coins back to user.
 
 ## Advanced usage
+#### APP_BUTTON_GROUP
 In some payment scenario, for example:
 The coin exchange provides coin-exchange service which transfer BTC to EOS ETH, BCH etc,
 you want show the clients many pay links with different amount, APP_BUTTON_GROUP can help you here.
@@ -115,6 +116,7 @@ MIXIN_WS_API.sendAppButtonGroup(ws, conversationId, userId, buttons)
 ```
 here show clients two buttons for EOS and BTC, you can add more buttons as this way.
 
+#### APP_CARD
 Maybe a group of buttons too simple for you, try a pay link which show a icon: APP_CARD.
 ```python
 print('send a link APP_CARD')

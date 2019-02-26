@@ -441,7 +441,6 @@ class MIXIN_API:
             "account_name": account_name,
             "account_tag": account_tag,
         }
-        print(body)
         return self.__genNetworkPostRequest('/addresses', body)
 
 

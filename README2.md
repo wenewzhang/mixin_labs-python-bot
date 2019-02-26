@@ -103,4 +103,24 @@ elif categoryindata == "SYSTEM_ACCOUNT_SNAPSHOT":
 Call mixin_api.transferTo to refund the coins back to user.
 
 ## Advanced usage
-coming soon!
+In some payment scenario, for example:
+The coin exchange provides coin-exchange service which transfer BTC to EOS ETH, BCH etc,
+you want show the clients many pay links with different amount, APP_BUTTON_GROUP can help you here.
+```python
+print('send a link APP_BUTTON_GROUP')
+btnBTC    = MIXIN_WS_API.packButton(mixin_config.client_id, BTC_ASSET_ID, "0.0001","BTC pay")
+btnEOS    = MIXIN_WS_API.packButton(mixin_config.client_id, EOS_ASSET_ID, "0.01","EOS pay","#0080FF")
+buttons   = [btnBTC,btnEOS]
+MIXIN_WS_API.sendAppButtonGroup(ws, conversationId, userId, buttons)
+```
+here show clients two buttons for EOS and BTC, you can add more buttons as this way.
+
+Maybe a group of buttons too simple for you, try a pay link which show a icon: APP_CARD.
+```python
+print('send a link APP_CARD')
+MIXIN_WS_API.sendAppCard(ws, conversationId, mixin_config.client_id,
+                        BTC_ASSET_ID, "0.0001",
+                        "https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128",
+                        "Pay BTC 0.0001","topay")
+```
+![APP_CARD](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app_card.jpg)

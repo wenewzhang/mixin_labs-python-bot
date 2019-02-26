@@ -13,6 +13,9 @@ try:
 except ImportError:
     import _thread as thread
 
+MASTER_UUID     = "0b4f49dc-8fb4-4539-9a89-fb3afc613747";
+BTC_ASSET_ID    = "c6d0c728-2624-429b-8e0d-d9d19b6592fa";
+EOS_ASSET_ID    = "6cfe566e-4aad-470b-8c9a-2fd35b49c68d";
 
 def on_message(ws, message):
     inbuffer = BytesIO(message)
@@ -55,6 +58,20 @@ def on_message(ws, message):
         if categoryindata == "PLAIN_TEXT":
             realData = realData.decode('utf-8')
             print("dataindata",realData)
+            if 'a' == realData:
+                print('send a link APP_CARD')
+                MIXIN_WS_API.sendAppCard(ws, conversationId, mixin_config.client_id,
+                                        BTC_ASSET_ID, "0.0001",
+                                        "https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128",
+                                        "Pay BTC 0.0001","topay")
+                return
+            if 'g' == realData:
+                print('send a link APP_BUTTON_GROUP')
+                btnBTC    = MIXIN_WS_API.packButton(mixin_config.client_id, BTC_ASSET_ID, "0.0001","BTC pay")
+                btnEOS    = MIXIN_WS_API.packButton(mixin_config.client_id, EOS_ASSET_ID, "0.01","EOS pay","#0080FF")
+                buttons   = [btnBTC,btnEOS]
+                MIXIN_WS_API.sendAppButtonGroup(ws, conversationId, userId, buttons)
+                return
             MIXIN_WS_API.sendUserText(ws, conversationId, userId, realData)
         elif categoryindata == "SYSTEM_ACCOUNT_SNAPSHOT":
             rdJs = json.loads(realData)

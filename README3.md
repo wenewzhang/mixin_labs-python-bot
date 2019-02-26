@@ -184,8 +184,14 @@ The **14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C** is a Bitcoin wallet address, Output l
 'fee': '0.0034802', 'reserve': '0', 'dust': '0.0001',
 'updated_at': '2019-02-26T00:03:05.028140704Z'}}
 ```
-
-
+If you want create a EOS address, call it like below:
+```python
+EOS_ASSET_ID     = "6cfe566e-4aad-470b-8c9a-2fd35b49c68d";
+EOS_WALLET_ADDR  = "3e2f70914c8e8abbf60040207c8aae62";
+EOS_ACCOUNT_NAME = "eoswithmixin";
+eosInfo = mixinApiBotInstance.createAddress(EOS_ASSET_ID, "","",EOS_ACCOUNT_NAME,EOS_WALLET_ADDR)
+print(eosInfo)
+```
 #### Read withdraw fee anytime
 ```python
 addr_id = btcInfo.get("data").get("address_id")

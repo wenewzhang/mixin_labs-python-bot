@@ -22,7 +22,14 @@ userInfo.get("data").get("user_id"),
 帐号创建成功后结果如下:
 
 ```python
-{'data': {'type': 'user', 'user_id': '2f25b669-15e7-392c-a1d5-fe7ba43bdf37', 'identity_number': '0', 'full_name': 'Tom Bot', 'avatar_url': '', 'relationship': '', 'mute_until': '0001-01-01T00:00:00Z', 'created_at': '2019-02-22T06:23:41.754573722Z', 'is_verified': False, 'session_id': '284c7b39-3284-4cf6-9354-87df30ec7d57', 'phone': '', 'pin_token': 'g4upUgBXa8ATk7yxL6B94HgI4GV4sG4t8Wyn6uTu2Q2scH11UMQ5bYDb6Md+3LRQqRjEdRFcLlHijXGBihRweTaKTZjHQqolWbZcffesVIias6WppV/QMu4TzXCuKa5xpj3uhjL+yPyfWTLGUaVJTJN9n7PQmHSIUBXrovbfodk=', 'invitation_code': '', 'code_id': '', 'code_url': '', 'has_pin': False, 'receive_message_source': 'EVERYBODY', 'accept_conversation_source': 'EVERYBODY'}}
+{'data': {'type': 'user', 'user_id': '2f25b669-15e7-392c-a1d5-fe7ba43bdf37',
+'identity_number': '0', 'full_name': 'Tom Bot', 'avatar_url': '',
+'relationship': '', 'mute_until': '0001-01-01T00:00:00Z',
+'created_at': '2019-02-22T06:23:41.754573722Z', 'is_verified': False,
+'session_id': '284c7b39-3284-4cf6-9354-87df30ec7d57', 'phone': '',
+'pin_token': 'g4upUgBXa8ATk7yxL6B94HgI4GV4sG4t8Wyn6uTu2Q2scH11UMQ5bYDb6Md+3LRQqRjEdRFcLlHijXGBihRweTaKTZjHQqolWbZcffesVIias6WppV/QMu4TzXCuKa5xpj3uhjL+yPyfWTLGUaVJTJN9n7PQmHSIUBXrovbfodk=',
+'invitation_code': '', 'code_id': '', 'code_url': '', 'has_pin': False,
+'receive_message_source': 'EVERYBODY', 'accept_conversation_source': 'EVERYBODY'}}
 ```
 
 现在你需要小心保管好你的帐号信息，在读取该账户的比特币资产余额或者进行其他操作时，将需要用到这些信息.
@@ -55,7 +62,17 @@ def readAssetAddress(asset_id,isBTC = True):
 
 创建的帐号的比特币资产详细信息如下，其中public key就是比特币的存币地址:
 ```python
-{'data': {'type': 'asset', 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'chain_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'symbol': 'BTC', 'name': 'Bitcoin', 'icon_url': 'https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128', 'balance': '0', 'public_key': '12sJHR7HJPMt33KwSHyxQvYqGGUEbVGREf', 'account_name': '', 'account_tag': '', 'price_btc': '1', 'price_usd': '3879.88117389', 'change_btc': '0', 'change_usd': '0.017333475714793264', 'asset_key': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'confirmations': 12, 'capitalization': 0}}
+{'data': {'type': 'asset', 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa',
+'chain_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa',
+'symbol': 'BTC', 'name': 'Bitcoin',
+'icon_url': 'https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128',
+'balance': '0',
+'public_key': '12sJHR7HJPMt33KwSHyxQvYqGGUEbVGREf',
+'account_name': '', 'account_tag': '', 'price_btc': '1',
+'price_usd': '3879.88117389', 'change_btc': '0',
+'change_usd': '0.017333475714793264',
+'asset_key': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa',
+'confirmations': 12, 'capitalization': 0}}
 Account a8cefb2e-cb93-338f-aba7-32a3a635ad02 's Bitcoin wallet address is 12sJHR7HJPMt33KwSHyxQvYqGGUEbVGREf
 ```
 
@@ -99,7 +116,15 @@ EOS的存币地址与其它的币有些不同，它由两部分组成： account
 
 EOS的资产余额返回结果如下:
 ```python
-{'data': {'type': 'asset', 'asset_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d', 'chain_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d', 'symbol': 'EOS', 'name': 'EOS', 'icon_url': 'https://images.mixin.one/a5dtG-IAg2IO0Zm4HxqJoQjfz-5nf1HWZ0teCyOnReMd3pmB8oEdSAXWvFHt2AJkJj5YgfyceTACjGmXnI-VyRo=s128', 'balance': '0', 'public_key': '', 'account_name': 'eoswithmixin', 'account_tag': '70dae97b661ca9f80cb0e6549feeba6c', 'price_btc': '0.00092392', 'price_usd': '3.58276497', 'change_btc': '-0.019294922814297986', 'change_usd': '-0.0033825963089133683', 'asset_key': 'eosio.token:EOS', 'confirmations': 64, 'capitalization': 0}}
+{'data': {'type': 'asset', 'asset_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d',
+'chain_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d',
+'symbol': 'EOS', 'name': 'EOS',
+'icon_url': 'https://images.mixin.one/a5dtG-IAg2IO0Zm4HxqJoQjfz-5nf1HWZ0teCyOnReMd3pmB8oEdSAXWvFHt2AJkJj5YgfyceTACjGmXnI-VyRo=s128',
+'balance': '0', 'public_key': '',
+'account_name': 'eoswithmixin', 'account_tag': '70dae97b661ca9f80cb0e6549feeba6c',
+'price_btc': '0.00092392', 'price_usd': '3.58276497',
+'change_btc': '-0.019294922814297986', 'change_usd': '-0.0033825963089133683',
+'asset_key': 'eosio.token:EOS', 'confirmations': 64, 'capitalization': 0}}
 Account a8cefb2e-cb93-338f-aba7-32a3a635ad02 's EOS account name is eoswithmixin, wallet address is 70dae97b661ca9f80cb0e6549feeba6c
 ```
 
@@ -155,7 +180,22 @@ print(btcInfo)
 ```
  这里的 **14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C** 就是一个比特币钱包地址, 如下所示，提现费用是0.0025738 BTC, address_id  是"345855b5-56a5-4f3b-ba9e-d99601ef86c1".                                                   
  ```python
- {'data': {'type': 'address', 'address_id': '47998e2f-2761-45ce-9a6c-6f167b20c78b', 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'public_key': '14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C', 'label': 'BTC', 'account_name': '', 'account_tag': '', 'fee': '0.0034802', 'reserve': '0', 'dust': '0.0001', 'updated_at': '2019-02-26T00:03:05.028140704Z'}}
+ {'data': {'type': 'address',
+ 'address_id': '47998e2f-2761-45ce-9a6c-6f167b20c78b',
+ 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa',
+ 'public_key': '14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C', 'label': 'BTC',
+ 'account_name': '', 'account_tag': '',
+ 'fee': '0.0034802', 'reserve': '0', 'dust': '0.0001',
+ 'updated_at': '2019-02-26T00:03:05.028140704Z'}}
+ ```
+
+如果你操作的是EOS, 示例代码如下：
+ ```python
+ EOS_ASSET_ID     = "6cfe566e-4aad-470b-8c9a-2fd35b49c68d";
+ EOS_WALLET_ADDR  = "3e2f70914c8e8abbf60040207c8aae62";
+ EOS_ACCOUNT_NAME = "eoswithmixin";
+ eosInfo = mixinApiBotInstance.createAddress(EOS_ASSET_ID, "","",EOS_ACCOUNT_NAME,EOS_WALLET_ADDR)
+ print(eosInfo)
  ```
 
 #### 创建提现地址成功后，你可以用readAddress读取最新的提现费。

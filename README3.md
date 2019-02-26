@@ -13,7 +13,7 @@ Pre-request: You should have a Mixin Network account. Create an account can be d
 ```
 The function in Python SDK create a RSA key pair automatically, then call Mixin Network to create an account. last the function return all account information.
 
-```php
+```python
 //Create User api include all account information
 userInfo.get("data").get("pin_token"),
 userInfo.get("data").get("session_id"),
@@ -29,7 +29,7 @@ Now you need to carefully keep the account information. You need these informati
 ### Create Bitcoin wallet for the Mixin Network account
 The Bitcoin  wallet is not generated automatically at same time when we create Mixin Network account. Read Bitcoin asset once to generate a Bitcoin wallet.
 ```python
-def readAssetBalance(asset_id):
+def readAssetAddress(asset_id,isBTC = True):
     with open('new_users.csv', newline='') as csvfile:
         reader  = csv.reader(csvfile)
         for row in reader:
@@ -44,7 +44,13 @@ def readAssetBalance(asset_id):
                                                         userid,
                                                         pin,"")
             btcInfo = mixinApiNewUserInstance.getAsset(asset_id)
-            print("Account %s \'s balance is %s  " %(userid,btcInfo.get("data").get("balance")))
+            print(btcInfo)
+            if isBTC:
+                print("Account %s \'s Bitcoin wallet address is %s  " %(userid,btcInfo.get("data").get("public_key")))
+            else:
+                print("Account %s \'s EOS account name is %s, wallet address is %s  " %(userid,
+                                                                        btcInfo.get("data").get("account_name"),
+                                                                        btcInfo.get("data").get("account_tag")))
 ```
 You can found information about Bitcoin asset in the account. Public key is the Bitcoin deposit address. Full response of read  Bitcoin asset is
 ```python
@@ -87,7 +93,7 @@ Create other asset wallet is same as create Bitcoin wallet, just read the asset.
 
 If you read EOS deposit address, the deposit address is composed of two parts: account_name and account tag. When you transfer EOS token to your account in Mixin network, you should fill both account name and memo. The memo content is value of 'account_tag'.
 Result of read EOS asset is:
-```php
+```python
 {'data': {'type': 'asset', 'asset_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d', 'chain_id': '6cfe566e-4aad-470b-8c9a-2fd35b49c68d', 'symbol': 'EOS', 'name': 'EOS', 'icon_url': 'https://images.mixin.one/a5dtG-IAg2IO0Zm4HxqJoQjfz-5nf1HWZ0teCyOnReMd3pmB8oEdSAXWvFHt2AJkJj5YgfyceTACjGmXnI-VyRo=s128', 'balance': '0', 'public_key': '', 'account_name': 'eoswithmixin', 'account_tag': '185b27f83d76dad3033ee437195aac11', 'price_btc': '0.00096903', 'price_usd': '3.8563221', 'change_btc': '0.00842757579765049', 'change_usd': '0.0066057628802373095', 'asset_key': 'eosio.token:EOS', 'confirmations': 64, 'capitalization': 0}}
 ```
 
@@ -97,7 +103,7 @@ Now you can deposit Bitcoin into the deposit address.
 This is maybe too expensive for this tutorial. There is a free and lightening fast solution to deposit Bitcoin: add the address in your Mixin messenger account withdrawal address and withdraw small amount Bitcoin from your account to the address. It is free and confirmed instantly because they are both on Mixin Network.
 
 Now you can read Bitcoin balance of the account.
-```php
+```python
 btcInfo = mixinApiNewUserInstance.getAsset("c6d0c728-2624-429b-8e0d-d9d19b6592fa");
 print(btcInfo);
 ```
@@ -115,7 +121,7 @@ mixinApiBotInstance.transferTo(userid, BTC_ASSET_ID, AMOUNT, "")
 
 Read bot's Bitcoin balance to confirm the transaction.
 Caution: **mixinApiNewUserInstance** is for the New User!
-```php
+```python
 def readAssetBalance(asset_id):
     with open('new_users.csv', newline='') as csvfile:
         reader  = csv.reader(csvfile)
@@ -133,7 +139,39 @@ def readAssetBalance(asset_id):
             btcInfo = mixinApiNewUserInstance.getAsset(asset_id)
             print("Account %s \'s balance is %s  " %(userid,btcInfo.get("data").get("balance")))
 ```
-### Send Bitcoin to another Bitcoin exchange or wallet
-coming soon!
 
-[Full source code](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/call_apis.php)
+### Send Bitcoin to another Bitcoin exchange or wallet
+If you want to send Bitcoin to another exchange or wallet, you need to know the destination deposit address, then add the address in withdraw address list of the Mixin network account.
+
+Pre-request: Withdrawal address is added and know the Bitcoin withdrawal fee
+
+#### Add destination address to withdrawal address list
+Call createAddress, the ID of address will be returned in result of API and is required soon.
+```python
+BTC_ASSET_ID    = "c6d0c728-2624-429b-8e0d-d9d19b6592fa";
+EOS_ASSET_ID    = "6cfe566e-4aad-470b-8c9a-2fd35b49c68d";
+BTC_WALLET_ADDR = "14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C";
+btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
+print(btcInfo)
+```
+The **14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C** is a Bitcoin wallet address, Output like below, The API result contains the withdrawal address ID, fee is 0.0034802 BTC.                                                   
+```python
+{'data': {'type': 'address', 'address_id': '47998e2f-2761-45ce-9a6c-6f167b20c78b', 'asset_id': 'c6d0c728-2624-429b-8e0d-d9d19b6592fa', 'public_key': '14T129GTbXXPGXXvZzVaNLRFPeHXD1C25C', 'label': 'BTC', 'account_name': '', 'account_tag': '', 'fee': '0.0034802', 'reserve': '0', 'dust': '0.0001', 'updated_at': '2019-02-26T00:03:05.028140704Z'}}
+```
+
+
+#### Read withdraw fee anytime
+```python
+addr_id = btcInfo.get("data").get("address_id")
+addrInfo = mixinApiBotInstance.getAddress(addr_id)
+print(addrInfo)
+```
+
+#### Send Bitcoin to destination address
+Submit the withdrawal request to Mixin Network, the btcInfo.get("data").get("address_id") is the address id it's return by createAddress
+```python
+  mixinApiBotInstance.withdrawals(btcInfo.get("data").get("address_id"),AMOUNT,"")
+```
+#### Confirm the transaction in blockchain explore
+
+[Full source code](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/call_apis.py)

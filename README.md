@@ -1,4 +1,4 @@
-# Python Bitcoin tutorial based on Mixin SDK I: Create bot
+# Python Bitcoin tutorial based on Mixin Network
 ![cover](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/Bitcoin_python.jpg)
 A Mixin messenger bot will be created in this tutorial. The bot is powered by python, it echo message and Bitcoin from user.
 

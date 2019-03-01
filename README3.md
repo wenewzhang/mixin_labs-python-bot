@@ -1,3 +1,4 @@
+# How to create a Bitcoin wallet based on Mixin Network API
 We have created a bot to [echo message](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README.md) and [echo Bitcoin](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2.md).
 
 # What you will learn from this chapter

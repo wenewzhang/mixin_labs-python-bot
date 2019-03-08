@@ -443,7 +443,16 @@ class MIXIN_API:
         }
         return self.__genNetworkPostRequest('/addresses', body)
 
+    def createAddressEOS(self, asset_id, account_name, account_tag, label = ""):
 
+        body = {
+            "asset_id": asset_id,
+            "pin": self.genEncrypedPin().decode(),
+            "account_name": account_name,
+            "account_tag": account_tag,
+            "label": label,
+        }
+        return self.__genNetworkPostRequest('/addresses', body)
     """
     Delete an address by ID.
     """

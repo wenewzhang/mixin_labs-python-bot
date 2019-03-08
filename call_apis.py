@@ -91,11 +91,11 @@ mixinApiBotInstance = MIXIN_API(mixin_config)
 
 PromptMsg  = "1: Create user and update PIN\n2: Read Bitcoin balance \n3: Read Bitcoin Address\n4: Read EOS balance\n"
 PromptMsg += "5: Read EOS address\n6: Transfer Bitcoin from bot to new account\n7: Transfer Bitcoin from new account to Master\n"
-PromptMsg += "8: Withdraw bot's Bitcoin\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
-PromptMsg += "9: Exit \nMake your choose:"
+PromptMsg += "8: Withdraw bot's Bitcoin\n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
+PromptMsg += "q: Exit \nMake your choose:"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
-    if (cmd == '9' ):
+    if (cmd == 'q' ):
         exit()
     print("Run...")
     if ( cmd == '1' ):
@@ -177,9 +177,27 @@ while ( 1 > 0 ):
                                                             session_id,
                                                             userid,
                                                             pin,"")
-                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
-                mixinApiBotInstance.withdrawals(btcInfo.get("data").get("address_id"),AMOUNT,"")
+                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC")
+                # mixinApiBotInstance.withdrawals(btcInfo.get("data").get("address_id"),AMOUNT,"")
                 print(btcInfo)
+    if ( cmd == '9' ):
+        with open('new_users.csv', newline='') as csvfile:
+            reader  = csv.reader(csvfile)
+            for row in reader:
+                pin         = row.pop()
+                userid      = row.pop()
+                session_id  = row.pop()
+                pin_token   = row.pop()
+                private_key = row.pop()
+                print(pin)
+                mixinApiNewUserInstance = generateMixinAPI(private_key,
+                                                            pin_token,
+                                                            session_id,
+                                                            userid,
+                                                            pin,"")
+                eosInfo = mixinApiBotInstance.createAddressEOS(EOS_ASSET_ID,"eoswithmixin","d80363afcc466fbaf2daa7328ae2adfa")
+                # mixinApiBotInstance.withdrawals(btcInfo.get("data").get("address_id"),AMOUNT,"")
+                print(eosInfo)
     if ( cmd == 'a' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

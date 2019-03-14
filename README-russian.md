@@ -62,43 +62,42 @@ Creates virtual Python environments in one or more target directories.
   --copies              Пытаться использовать копии, на не символические ссылки,
                         даже если символические ссылки используют платформой "по умолчанию".
   --clear               Удалить содержимое папки окружения, если она существует,
-                        перед созданием окружения it
-  --upgrade             Upgrade the environment directory to use this version
-                        of Python, assuming Python has been upgraded in-place.
-  --without-pip         Skips installing or upgrading pip in the virtual
-                        environment (pip is bootstrapped by default)
-  --prompt PROMPT       Provides an alternative prompt prefix for this
-                        environment.
+                        перед созданием окружения.
+  --upgrade             Обновить папку окружения для использования этой версии
+                        Python, при условии что он был обновлен "на месте".
+  --without-pip         Пропустить или обновить установку pip в виртуальном
+                        окружении (pip загружается по умолчанию)
+  --prompt PROMPT       Предоставляет альтернативный префикс приглашения для
+                        этой виртуальной среды.
 
-Once an environment has been created, you may wish to activate it, e.g. by
-sourcing an activate script in its bin directory
+Как только окружение создано, Вы можете активировать его, например, путем поиска сценария активации в его папке bin.
 ```
 
-## Create mixin_labs-python-bot project
+## Создаем проект mixin_labs-python-bot
 
-You need create project directory, make it as a python's “virtual environment”, and install the required packages.
+Вы должны создать папку проекта, сделать ее как виртуальное окружение python и установить необходимые пакеты.
 ```bash
 mkdir mixin_labs-python-bot
 cd mixin_labs-python-bot
 python3 -m venv ./
 ```
 
-Run **python3 -m venv** , following file and folder are created:
+Запускаем **python3 -m venv** , следующие файл и папка будут созданы:
 ```bash
 wenewzha:mixin_labs-python-bot wenewzhang$ ls
 bin		include		lib		pyvenv.cfg
 ```
 
-Once a virtual environment has been created, it can be “activated” using a script in the virtual environment’s binary directory.
+Как только виртуальное окружение создано, его можно "активировать"", используя скрипт в папке bin виртуального окружения.
 ```bash
 wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$
 ```
-So that “python” or "pip" invoke from the virtual environment, and you can run installed scripts without having to use their full path.
+Так как “python” или "pip" вызываются из виртуального окружения, Вы можете запускать установленные скрипты без указания их полного пути.
 
-## Install required packages by "virtual environment"
+## Установка необходимых пакетов с помощью "виртуального окружения"
 
-Create the requirement list.
+Создайте список требуемого
 > requirements.txt
 ```txt
 cryptography==2.4.2
@@ -110,30 +109,29 @@ PyYAML==3.13
 requests==2.21.0
 websocket-client==0.54.0
 ```
-Use pip to upgrade pip itself, and install required packages.
+Используйте pip для обновления самомго себя и установите требующиеся пакета из списка
 ```bash
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Download the mixin-network api.
+## Загрузка mixin-network api.
 ```bash
 wget https://github.com/wenewzhang/mixin-python3-sdk/raw/master/mixin_ws_api.py
 wget https://github.com/wenewzhang/mixin-python3-sdk/raw/master/mixin_api.py
 wget https://github.com/wenewzhang/mixin-python3-sdk/raw/master/mixin_config.py
 ```
 
-## Hello, world in Python
+## Hello, world при помощи Python
 
-### Create your first app in Mixin Network developer dashboard
-You need to create an app in dashboard. This [tutorial](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account) can help you.
+### Создайте свое первое приложение в панели разработчика Mixin Network
+Вам необходимо создать  приложение в панели. Это [руководство](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account) может помочь Вам.
 
-### Generate parameter of your app in dashboard
-After app is created in dashboard, you still need to [generate parameter](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app)
-and write down required content, these content will be written into mixin_config.py file.
+### Генерация параметров приложения в панели
+После создания приложения в панели Вы должны [генерировать параметры](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app) и написать необходимое содержимое, это содержимое будет записано в файл mixin_config.py.
 
 ![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/mixin_network-keys.jpg)
-In the folder, create a file: mixin_config.py. Copy the following content into it.
+В папке создайте файл: mixin_config.py. Скопируйте следующее содержимое в этот файл.
 > mixin_config.py
 ```python
 client_id= 'ed882a39-0b0c-4413-bbd9-221cdeee56bf'
@@ -161,7 +159,7 @@ UN0KsG9JPRVNeQR8HnwpAkACrr9cNp1H1bytHG9a6L+5cVHkRhqqEYWVO41MhgZF
 5bIKx5OXCJB2VwY7fjFet2KxTHGfEZt/khjFNZzVX7lN
 -----END RSA PRIVATE KEY-----"""
 ```
-Replace the value with content generated in dashboard. Create an app-mini.py file, fill it by the content below:
+Замените значеня содержимым, сгенерированным в панели. Создайте файл app-mini.py и заполните его содержимое текстом ниже:
 > app-mini.py
 ```python
 from mixin_ws_api import MIXIN_WS_API
@@ -229,7 +227,7 @@ if __name__ == "__main__":
     mixin_ws.run()
 ```
 
-Run the app-mini.py, DO NOT forget active the python "virtual environment" before!"
+Запустите app-mini.py, НЕ ЗАБУДЬТЕ активировать перед этим  "виртуальное окружение" python"
 ```bash
 cd mixin_labs-python-bot
 wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate
@@ -238,6 +236,7 @@ wenewzha:mixin_labs-python-bot wenewzhang$ source ./bin/activate
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py
 ...
 ```
+Если в консоли выводится следующее сообщение, значит, все успешно.
 If console output following message, congratulations.
 ```bash
 (mixin_labs-python-bot) wenewzha:mixin_labs-python-bot wenewzhang$ python app-mini.py
@@ -247,12 +246,12 @@ ws open
 -------json object end---------
 ```
 
-Add the bot(for example, this bot id is 7000101639) as your friend in [Mixin Messenger](https://mixin.one/messenger) and send your messages.
+Добавьте бота(например, id этого бота 7000101639) как Вашего друга в [Mixin Messenger](https://mixin.one/messenger) и отправьте ему сообщение.
 
 ![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/helloworld.jpeg)
 
-### Source code explanation
-The code creates a websocket client.
+### Объяснение исходного кода
+Этот код создает websocket клиент.
 ```python
 if __name__ == "__main__":
 
@@ -261,12 +260,12 @@ if __name__ == "__main__":
     mixin_ws.run()
 ```
 
-Send a READ operation message to the server let it knows this message has been read. The bot will receive the duplicated message when the bot connected to server again if bot don't send response.
+Отправьте сообщение операции READ на сервер, чтобы он знал, что сообщение прочитано. Бот получит повторное сообщение, когда он подключится к серверу, если не будет отметки о прочтении.
 
 ```python
         MIXIN_WS_API.replayMessage(ws, msgid)
 ```
-The bot echo every text from user
+Бот повторяет любой текст от пользователя
 ```python
 if categoryindata == "PLAIN_TEXT":
     realData = realData.decode('utf-8')
@@ -274,9 +273,9 @@ if categoryindata == "PLAIN_TEXT":
     MIXIN_WS_API.sendUserText(ws, conversationId, userId, realData)    
 ```
 
-Not only texts, images and other type message will be pushed to your bot. You can find more [details](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/) about Messenger message.
+Не только текст, но и картинки и другие типы сообщений могут передаваться Вашему боту. Вы можете узнать подробнее [тут](https://developers.mixin.one/api/beta-mixin-message/websocket-messages/) о сообщениях Messenger.
 
-### End
-Now your bot worked. You can hack it.
+### Окончание
+Теперь Ваш бот работает. И Вы можете сломать это.
 
-Full code is [here](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app-mini.py)
+Полный код [здесь](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app-mini.py)

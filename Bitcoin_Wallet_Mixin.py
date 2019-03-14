@@ -1,15 +1,19 @@
 from Crypto.PublicKey import RSA
 from mixin_api import MIXIN_API
+import uuid
 import mixin_config
 import json
 import csv
 import time
+import uuid
+import umsgpack
+import base64
 
 PIN             = "945689";
 PIN2            = "845689";
 MASTER_ID       = "37222956";
 EXINCORE_UUID   = "61103d28-3ac2-44a2-ae34-bd956070dab1"
-MASTER_UUID     = "0b4f49dc-8fb4-4539-9a89-fb3afc613747";
+MASTER_UUID     = "28ee416a-0eaa-4133-bc79-9676909b7b4e";
 BTC_ASSET_ID    = "c6d0c728-2624-429b-8e0d-d9d19b6592fa";
 EOS_ASSET_ID    = "6cfe566e-4aad-470b-8c9a-2fd35b49c68d";
 USDT_ASSET_ID   = "815b0b1a-2764-3736-8faa-42d694fa620a"
@@ -160,7 +164,7 @@ while ( 1 > 0 ):
         print("Read USDT (uuid:%s) balance" %(USDT_ASSET_ID))
         btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
         print("Account %s \'s balance is %s  " %(mixinApiNewUserInstance.client_id ,btcInfo.get("data").get("balance")))
-        print('https://mixin.one/pay?recipient='+mixinApiNewUserInstance.client_id+'&asset='+USDT_ASSET_ID+'&amount=20&trace=' + str(uuid.uuid1()) + '&memo=depositUSDT')
+        print('https://mixin.one/pay?recipient='+mixinApiNewUserInstance.client_id+'&asset='+USDT_ASSET_ID+'&amount=0.5&trace=' + str(uuid.uuid1()) + '&memo=depositUSDT')
 
     if ( cmd == '5' ):
         print("Read USDT (uuid:%s) address" %(USDT_ASSET_ID))
@@ -168,30 +172,28 @@ while ( 1 > 0 ):
         print(btcInfo)
 
     if ( cmd == '6' ):
-        mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin)
-        print("Pay USDT to ExinCore to buy BTC")
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                row.pop()
-                userid  = row.pop()
-                mixinApiBotInstance.transferTo(userid, BTC_ASSET_ID, AMOUNT, "")
+        # Pack memo
+        memo_for_exin = base64.b64encode(umsgpack.packb({"A": uuid.UUID("{c6d0c728-2624-429b-8e0d-d9d19b6592fa}").bytes})).decode("utf-8")
+        print("packed memo is")
+        print(memo_for_exin)
+        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
+        remainUSDT = btcInfo.get("data").get("balance")
+        print("You have : " + remainUSDT + " USDT")
+        this_uuid = str(uuid.uuid1())
+        print("uuid is: " + this_uuid)
+        confirm_payUSDT = input("Input Yes to pay " + remainUSDT + " to ExinCore to buy Bitcoin")
+        if ( confirm_payUSDT == "Yes" ):
+            transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, USDT_ASSET_ID, "1", memo_for_exin, this_uuid)
+            snapShotID = transfer_result.get("data").get("snapshot_id")
+            print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '7' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiBotInstance.transferTo(MASTER_UUID, BTC_ASSET_ID, AMOUNT, "")
-                print(btcInfo)
+        USDT_Snapshots_result = mixinApiNewUserInstance.snapshots("2019-03-14T12:03:40.003986Z", asset_id = "", order='ASC',limit=10)
+        USDT_Snapshots = USDT_Snapshots_result.get('data')
+        for singleSnapShot in USDT_Snapshots:
+            print(singleSnapShot)
+            if "user_id" in singleSnapShot:
+                print(singleSnapShot)
+                print("It is me")
     if ( cmd == '8' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

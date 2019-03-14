@@ -183,7 +183,7 @@ while ( 1 > 0 ):
         print("uuid is: " + this_uuid)
         confirm_payUSDT = input("Input Yes to pay " + remainUSDT + " to ExinCore to buy Bitcoin")
         if ( confirm_payUSDT == "Yes" ):
-            transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, USDT_ASSET_ID, "1", memo_for_exin, this_uuid)
+            transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid)
             snapShotID = transfer_result.get("data").get("snapshot_id")
             print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '7' ):

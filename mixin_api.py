@@ -227,20 +227,21 @@ class MIXIN_API:
     generate Mixin Network GET http request for snapshot
     """
     def __genNetworkGetRequest_snapshots(self, path, body=None, auth_token=""):
-
-        url = self.__genUrl(path)
-
         if body is not None:
             body = urlencode(body)
         else:
             body = ""
 
+
+        url = self.__genUrl(path+"?" + body)
+        print(path+"?" + body)
+
         if auth_token == "":
-            token = self.genGETJwtToken(path, body, str(uuid.uuid4()))
+            token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
             auth_token = token.decode('utf8')
 
-        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
-        result_obj = r.json()
+            r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+            result_obj = r.json()
         return result_obj
 
 
@@ -607,9 +608,33 @@ class MIXIN_API:
             "asset":asset_id,
             "order":order
         }
-        finalURL = "/network/snapshots?offset=%s&asset=%s&order=%s&limit=%d" % (offset, asset_id, order, limit)
 
 
-        return self.__genNetworkGetRequest_snapshots(finalURL, body, )
+        return self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
 
+
+    def searchSnapShots(offset, asset_id, order, limit):
+        finalURL = "/network/snapshots?offset=%s&asset=%s&order=ASC&limit=%d" % (offset, asset_id, order, limit)
+        body = {'offset': offset, 'order' : order, 'limit':limit}
+        body_in_json = json.dumps(body)
+        print(body_in_json)
+
+        encoded = robot.genGETJwtToken(finalURL, body, str(uuid.uuid4()))
+        request_header = {"Authorization":"Bearer " + encoded, 'Content-Type': 'application/json', 'Content-length': '0'}
+ 
+        r = requests.get('https://api.mixin.one' + finalURL, headers = request_header)
+        print(r.status_code)
+        if r.status_code != 200:
+            error_body = result_obj['error']
+            print(error_body)
+
+        r.raise_for_status()
+
+        result_obj = r.json()
+        snapshots = result_obj["data"]
+
+        print(len(snapshots))
+        for singleSnapShot in snapshots:
+            if "user_id" in singleSnapShot:
+                print("It is me")
 

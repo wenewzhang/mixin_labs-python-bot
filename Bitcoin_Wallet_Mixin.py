@@ -187,7 +187,7 @@ while ( 1 > 0 ):
             snapShotID = transfer_result.get("data").get("snapshot_id")
             print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '7' ):
-        USDT_Snapshots_result = mixinApiNewUserInstance.snapshots("2019-03-14T12:03:40.003986Z", asset_id = "", order='ASC',limit=10)
+        USDT_Snapshots_result = mixinApiNewUserInstance.account_snapshots("2019-03-14T15:46:38.814234Z", asset_id = USDT_ASSET_ID, order='ASC',limit=2)
         USDT_Snapshots = USDT_Snapshots_result.get('data')
         for singleSnapShot in USDT_Snapshots:
             print(singleSnapShot)

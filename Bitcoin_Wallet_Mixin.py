@@ -192,23 +192,16 @@ while ( 1 > 0 ):
         for singleSnapShot in USDT_Snapshots_result_of_account:
             print(singleSnapShot)
     if ( cmd == '8' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC")
-                # mixinApiBotInstance.withdrawals(btcInfo.get("data").get("address_id"),AMOUNT,"")
-                print(btcInfo)
+        btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
+        remainBTC= btcInfo.get("data").get("balance")
+        print("You have : " + remainBTC+ " BTC")
+        this_uuid = str(uuid.uuid1())
+        print("uuid is: " + this_uuid)
+        confirm_pay= input("Input Yes to pay " + remainBTC+ " to ExinCore to buy Bitcoin")
+        if ( confirm_pay== "Yes" ):
+            transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, BTC_ASSET_ID, remainBTC, "", this_uuid)
+            snapShotID = transfer_result.get("data").get("snapshot_id")
+            print("Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '9' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

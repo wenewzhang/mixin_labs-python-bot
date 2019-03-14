@@ -234,7 +234,6 @@ class MIXIN_API:
 
 
         url = self.__genUrl(path+"?" + body)
-        print(path+"?" + body)
 
         if auth_token == "":
             token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
@@ -242,7 +241,13 @@ class MIXIN_API:
 
             r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
             result_obj = r.json()
-        return result_obj
+            snapshots_of_accoung = []
+            USDT_Snapshots = result_obj.get('data')
+            for singleSnapShot in USDT_Snapshots:
+                if "user_id" in singleSnapShot:
+                    snapshots_of_accoung.append(singleSnapShot)
+
+            return snapshots_of_accoung
 
 
     """

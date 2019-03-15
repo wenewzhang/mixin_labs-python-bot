@@ -123,6 +123,44 @@ while ( 1 > 0 ):
                                                             userid,
                                                             pin,"")
             print("read user id:" + userid)
+    if ( cmd == '2' ):
+        AssetsInfo = mixinApiNewUserInstance.getMyAssets()
+        print("Your asset balance is\n===========")
+        for eachAssest in AssetsInfo:
+            print("%s: %s" %(eachAssest.get("name"), eachAssest.get("balance")))
+        print("===========")
+
+
+        availableAssset = []
+        for eachAssetInfo in AssetsInfo: 
+            if (eachAssetInfo.get("balance") == "0"):
+                continue
+            if (float(eachAssetInfo.get("balance")) > 0):
+                availableAssset.append(eachAssetInfo)
+    if ( cmd == '3' ):
+        asset_result = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
+        btcInfo = asset_result.get("data")
+        print("%s: %s, depositAddress: %s" %(btcInfo.get("name"), btcInfo.get("balance"), btcInfo.get("public_key")))
+
+    if ( cmd == '4' ):
+        asset_result = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
+        usdtInfo = asset_result.get("data")
+        print("%s: %s, depositAddress: %s" %(usdtInfo.get("name"), usdtInfo.get("balance"), usdtInfo.get("public_key")))
+
+    if ( cmd == '6' ):
+        # Pack memo
+        memo_for_exin = gen_memo_ExinBuy(BTC_ASSET_ID)
+
+        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
+        remainUSDT = btcInfo.get("data").get("balance")
+        print("You have : " + remainUSDT + " USDT")
+        this_uuid = str(uuid.uuid1())
+        print("uuid is: " + this_uuid)
+        confirm_payUSDT = input("Input Yes to pay " + remainUSDT + " to ExinCore to buy Bitcoin")
+        if ( confirm_payUSDT == "Yes" ):
+            transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid)
+            snapShotID = transfer_result.get("data").get("snapshot_id")
+            print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '7' ):
         key = RSA.generate(1024)
         pubkey = key.publickey()
@@ -152,45 +190,7 @@ while ( 1 > 0 ):
         # mixinApiNewUserInstance.pay_pin = PIN
         pinInfo2 = mixinApiNewUserInstance.verifyPin()
         print(pinInfo2)
-    if ( cmd == '2' ):
-        AssetsInfo = mixinApiNewUserInstance.getMyAssets()
-        print("Your asset balance is\n===========")
-        for eachAssest in AssetsInfo:
-            print("%s: %s" %(eachAssest.get("name"), eachAssest.get("balance")))
-        print("===========")
 
-
-        availableAssset = []
-        for eachAssetInfo in AssetsInfo: 
-            if (eachAssetInfo.get("balance") == "0"):
-                continue
-            if (float(eachAssetInfo.get("balance")) > 0):
-                availableAssset.append(eachAssetInfo)
-    if ( cmd == '3' ):
-        asset_result = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-        btcInfo = asset_result.get("data")
-        print("%s: %s, depositAddress: %s" %(btcInfo.get("name"), btcInfo.get("balance"), btcInfo.get("public_key")))
-
-    if ( cmd == '4' ):
-        asset_result = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
-        usdtInfo = asset_result.get("data")
-        print("%s: %s, depositAddress: %s" %(usdtInfo.get("name"), usdtInfo.get("balance"), usdtInfo.get("public_key")))
-
-    if ( cmd == '6' ):
-        # Pack memo
-        memo_for_exin = gen_memo_ExinBuy(BTC_ASSET_ID)
-        print("packed memo is")
-        print(memo_for_exin)
-        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
-        remainUSDT = btcInfo.get("data").get("balance")
-        print("You have : " + remainUSDT + " USDT")
-        this_uuid = str(uuid.uuid1())
-        print("uuid is: " + this_uuid)
-        confirm_payUSDT = input("Input Yes to pay " + remainUSDT + " to ExinCore to buy Bitcoin")
-        if ( confirm_payUSDT == "Yes" ):
-            transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid)
-            snapShotID = transfer_result.get("data").get("snapshot_id")
-            print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '5' ):
         timestamp = input("input timestamp, history after the time will be searched:")
         limit = input("input max record you want to search:")

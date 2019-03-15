@@ -424,6 +424,12 @@ class MIXIN_API:
     """
     def deposit(self, asset_id):
         return self.__genNetworkGetRequest(' /assets/' + asset_id)
+    """
+    Read an asset's withdraw address, usually it is public_key, but account_name and account_tag is used for EOS.
+    """
+    def withdrawals_address(self, asset_id):
+        return self.__genNetworkGetRequest('/assets/' + asset_id + '/addresses')
+
 
 
     """

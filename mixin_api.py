@@ -610,10 +610,11 @@ class MIXIN_API:
 
 
         result_json = self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
-        snapshots_of_account = []
-        Snapshots = result_json.get('data')
-        for singleSnapShot in Snapshots:
+        return result_json.get('data')
+    def find_mysnapshot_in(self, in_snapshots):
+        mysnapshots_result = []
+        for singleSnapShot in in_snapshots:
             if "user_id" in singleSnapShot and (singleSnapShot.get("user_id") == self.client_id):
-                snapshots_of_account.append(singleSnapShot)
+                mysnapshots_result.append(singleSnapShot)
+        return mysnapshots_result
 
-        return snapshots_of_account

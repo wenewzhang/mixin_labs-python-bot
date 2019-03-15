@@ -189,15 +189,59 @@ while ( 1 > 0 ):
     if ( cmd == '7' ):
         timestamp = input("input timestamp, history before the time will be searched:")
         limit = input("input max record you want to search:")
-        USDT_Snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots(timestamp, asset_id = "", order='DSC',limit=limit)
+        snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots(timestamp, asset_id = "", order='DSC',limit=limit)
+        USDT_Snapshots_result_of_account = mixinApiNewUserInstance.find_mysnapshot_in(snapshots_result_of_account)
         for singleSnapShot in USDT_Snapshots_result_of_account:
-            print(singleSnapShot)
             amount_snap = singleSnapShot.get("amount")
-            asset_snap = singleSnapShot.get("asset")
+            asset_snap = singleSnapShot.get("asset").get("name")
             created_at_snap = singleSnapShot.get("created_at")
             memo_at_snap = singleSnapShot.get("data")
             id_snapshot = singleSnapShot.get("snapshot_id")
             print([amount_snap, asset_snap, created_at_snap, memo_at_snap, id_snapshot])
+            if((float(amount_snap)) < 0):
+                exin_order = umsgpack.unpackb(base64.b64decode(memo_at_snap))
+                asset_uuid_in_myorder = str(uuid.UUID(bytes = exin_order["A"]))
+                if(asset_uuid_in_myorder == BTC_ASSET_ID):
+                    print("I want to buy BTC with " + amount_snap + " " + asset_snap)
+            if((float(amount_snap)) > 0):
+                exin_order = umsgpack.unpackb(base64.b64decode(memo_at_snap))
+                print(exin_order)
+                if ("C" in exin_order):
+                    order_result = exin_order["C"]
+                    if(order_result == 1000):
+                        print("Successful Exchange")
+                    if(order_result == 1001):
+                        print("The order not found or invalid")
+                    if(order_result == 1002):
+                        print("The request data is invalid")
+                    if(order_result == 1003):
+                        print("The market not supported")
+                    if(order_result == 1004):
+                        print("Failed exchange")
+                    if(order_result == 1005):
+                        print("Partial exchange")
+                    if(order_result == 1006):
+                        print("Insufficient pool")
+                    if(order_result == 1007):
+                        print("Below the minimum exchange amount")
+                    if(order_result == 1007):
+                        print("Exceeding the maximum exchange amount")
+
+
+                if ("P" in exin_order):
+                    print("your order is executed at price:" +  exin_order["P"] + " USDT" +  " per " + asset_snap)
+                if ("F" in exin_order):
+                    print("Exin core fee is " + exin_order["F"] + " with fee asset" + str(uuid.UUID(bytes = exin_order["FA"])))
+                if ("T" in exin_order):
+                    if (exin_order["T"] == "F"):
+                        print("your order is refund to you because your memo is not correct")
+                    if (exin_order["T"] == "R"):
+                        print("your order is executed successfully")
+                    if (exin_order["T"] == "E"):
+                        print("exin failed to execute your order")
+                if ("O" in exin_order):
+                    print("trace id of your payment to exincore is " + str(uuid.UUID(bytes = exin_order["O"])))
+# c6d0c728-2624-429b-8e0d-d9d19b6592fa
     if ( cmd == '8' ):
         btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
         remainBTC= btcInfo.get("data").get("balance")

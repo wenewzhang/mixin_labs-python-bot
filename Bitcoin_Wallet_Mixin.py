@@ -92,13 +92,16 @@ def readAssetAddress(asset_id,isBTC = True):
                                                                         btcInfo.get("data").get("account_tag")))
 
             # print(btcInfo.get("data").get("public_key"))
+def gen_memo_ExinBuy(asset_id_string):
+    return base64.b64encode(umsgpack.packb({"A": uuid.UUID("{" + asset_id_string + "}").bytes})).decode("utf-8")
+
 
 mixinApiBotInstance = MIXIN_API(mixin_config)
 
 PromptMsg = "0: Read first user from local file new_users.csv\n"
-PromptMsg += "1: Create user and update PIN\n2: Read Bitcoin balance \n3: Read Bitcoin Address\n4: Read USDT balance\n"
+PromptMsg += "1: Create user and update PIN\n2: Read account balance \n3: Read Bitcoin Address\n4: Read USDT balance\n"
 PromptMsg += "5: Read USDT address\n6: Pay USDT to ExinCore to buy BTC\n7: Read transaction of my account\n"
-PromptMsg += "8: transafer account Bitcoin to Mixin Messenger user\n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
+PromptMsg += "8: transafer all asset to master of Mixin Messenger \n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
 PromptMsg += "q: Exit \nMake your choose:"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
@@ -150,11 +153,19 @@ while ( 1 > 0 ):
         pinInfo2 = mixinApiNewUserInstance.verifyPin()
         print(pinInfo2)
     if ( cmd == '2' ):
-        print("Read Bitcoin(uuid:%s) balance" %(BTC_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-        print("Account %s \'s balance is %s  " %(mixinApiNewUserInstance.client_id ,btcInfo.get("data").get("balance")))
-        print('https://mixin.one/pay?recipient='+mixinApiNewUserInstance.client_id+'&asset='+BTC_ASSET_ID+'&amount=0.001&trace=' + str(uuid.uuid1()) + '&memo=depositBTC')
+        AssetsInfo = mixinApiNewUserInstance.getMyAssets()
+        print("Your asset balance is\n===========")
+        for eachAssest in AssetsInfo:
+            print("%s: %s" %(eachAssest.get("name"), eachAssest.get("balance")))
+        print("===========")
 
+
+        availableAssset = []
+        for eachAssetInfo in AssetsInfo: 
+            if (eachAssetInfo.get("balance") == "0"):
+                continue
+            if (float(eachAssetInfo.get("balance")) > 0):
+                availableAssset.append(eachAssetInfo)
     if ( cmd == '3' ):
         print("Read Bitcoin(uuid:%s) address" %(BTC_ASSET_ID))
         btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
@@ -173,7 +184,7 @@ while ( 1 > 0 ):
 
     if ( cmd == '6' ):
         # Pack memo
-        memo_for_exin = base64.b64encode(umsgpack.packb({"A": uuid.UUID("{c6d0c728-2624-429b-8e0d-d9d19b6592fa}").bytes})).decode("utf-8")
+        memo_for_exin = gen_memo_ExinBuy(BTC_ASSET_ID)
         print("packed memo is")
         print(memo_for_exin)
         btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
@@ -187,21 +198,83 @@ while ( 1 > 0 ):
             snapShotID = transfer_result.get("data").get("snapshot_id")
             print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '7' ):
-        timestamp = input("input timestamp:")
-        USDT_Snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots(timestamp, asset_id = "", order='ASC',limit=500)
+        timestamp = input("input timestamp, history after the time will be searched:")
+        limit = input("input max record you want to search:")
+        snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots_after(timestamp, asset_id = "", limit=limit)
+        USDT_Snapshots_result_of_account = mixinApiNewUserInstance.find_mysnapshot_in(snapshots_result_of_account)
         for singleSnapShot in USDT_Snapshots_result_of_account:
-            print(singleSnapShot)
+            amount_snap = singleSnapShot.get("amount")
+            asset_snap = singleSnapShot.get("asset").get("name")
+            created_at_snap = singleSnapShot.get("created_at")
+            memo_at_snap = singleSnapShot.get("data")
+            id_snapshot = singleSnapShot.get("snapshot_id")
+            opponent_id_snapshot = singleSnapShot.get("opponent_id")
+            if((float(amount_snap)) < 0):
+                try:
+                    exin_order = umsgpack.unpackb(base64.b64decode(memo_at_snap))
+                    asset_uuid_in_myorder = str(uuid.UUID(bytes = exin_order["A"]))
+                    if(asset_uuid_in_myorder == BTC_ASSET_ID):
+                        print(created_at_snap + ": You pay " + amount_snap + " " + asset_snap + " to buy BTC from ExinCore")
+                except :
+                    print(created_at_snap + ": You pay " + str(amount_snap) + " " + asset_snap + " to " + opponent_id_snapshot +  " with memo:" + memo_at_snap)
+
+            if((float(amount_snap)) > 0 and memo_at_snap):
+                try:
+                    exin_order = umsgpack.unpackb(base64.b64decode(memo_at_snap))
+                    if ("C" in exin_order):
+                        order_result = exin_order["C"]
+                        headString = created_at_snap +": status of your payment to exin is : "
+                        if(order_result == 1000):
+                            headString = headString + "Successful Exchange"
+                        if(order_result == 1001):
+                            headString = headString + "The order not found or invalid"
+                        if(order_result == 1002):
+                            headString = headString + "The request data is invalid"
+                        if(order_result == 1003):
+                            headString = headString + "The market not supported"
+                        if(order_result == 1004):
+                            headString = headString + "Failed exchange"
+                        if(order_result == 1005):
+                            headString = headString + "Partial exchange"
+                        if(order_result == 1006):
+                            headString = headString + "Insufficient pool"
+                        if(order_result == 1007):
+                            headString = headString + "Below the minimum exchange amount"
+                        if(order_result == 1008):
+                            headString = headString + "Exceeding the maximum exchange amount"
+                        if ("P" in exin_order):
+                            headString = headString + ", your order is executed at price:" +  exin_order["P"] + " USDT" +  " per " + asset_snap
+                        if ("F" in exin_order):
+                            headString = headString + ", Exin core fee is " + exin_order["F"] + " with fee asset" + str(uuid.UUID(bytes = exin_order["FA"]))
+                        if ("T" in exin_order):
+                            if (exin_order["T"] == "F"):
+                                headString = headString +", your order is refund to you because your memo is not correct"
+                            if (exin_order["T"] == "R"):
+                                headString = headString +", your order is executed successfully"
+                            if (exin_order["T"] == "E"):
+                                headString = headString +", exin failed to execute your order"
+                        if ("O" in exin_order):
+                            headString = headString +", trace id of your payment to exincore is " + str(uuid.UUID(bytes = exin_order["O"]))
+                        print(headString)
+                except :
+                    print(created_at_snap +": You receive: " + str(amount_snap) + " " + asset_snap + " from " + opponent_id_snapshot + " with memo:" + memo_at_snap)
+# c6d0c728-2624-429b-8e0d-d9d19b6592fa
     if ( cmd == '8' ):
-        btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-        remainBTC= btcInfo.get("data").get("balance")
-        print("You have : " + remainBTC+ " BTC")
-        this_uuid = str(uuid.uuid1())
-        print("uuid is: " + this_uuid)
-        confirm_pay= input("Input Yes to pay " + remainBTC+ " to ExinCore to buy Bitcoin")
-        if ( confirm_pay== "Yes" ):
-            transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, BTC_ASSET_ID, remainBTC, "", this_uuid)
-            snapShotID = transfer_result.get("data").get("snapshot_id")
-            print("Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
+        AssetsInfo = mixinApiNewUserInstance.getMyAssets()
+        availableAssset = []
+        for eachAssetInfo in AssetsInfo: 
+            if (eachAssetInfo.get("balance") == "0"):
+                continue
+            if (float(eachAssetInfo.get("balance")) > 0):
+                availableAssset.append(eachAssetInfo)
+                print("You have : " + eachAssetInfo.get("balance") + eachAssetInfo.get("name"))
+                this_uuid = str(uuid.uuid1())
+                print("uuid is: " + this_uuid)
+                confirm_pay= input("type YES to pay " + eachAssetInfo.get("balance")+ " to MASTER ")
+                if ( confirm_pay== "YES" ):
+                    transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, eachAssetInfo.get("asset_id"), eachAssetInfo.get("balance"), "", this_uuid)
+                    snapShotID = transfer_result.get("data").get("snapshot_id")
+                    print("Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '9' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

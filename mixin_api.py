@@ -239,15 +239,9 @@ class MIXIN_API:
             token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
             auth_token = token.decode('utf8')
 
-            r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
-            result_obj = r.json()
-            snapshots_of_accoung = []
-            USDT_Snapshots = result_obj.get('data')
-            for singleSnapShot in USDT_Snapshots:
-                if "user_id" in singleSnapShot:
-                    snapshots_of_accoung.append(singleSnapShot)
-
-            return snapshots_of_accoung
+        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+        result_obj = r.json()
+        return result_obj
 
 
     """
@@ -292,7 +286,8 @@ class MIXIN_API:
     """
     def getMyAssets(self, auth_token=""):
 
-        return self.__genGetRequest('/assets', auth_token)
+        assets_result = self.__genNetworkGetRequest('/assets', auth_token)
+        return assets_result.get("data")
 
     """
     Read self profile.
@@ -615,4 +610,17 @@ class MIXIN_API:
         }
 
 
-        return self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
+        result_json = self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
+        return result_json.get('data')
+    def account_snapshots_before(self, offset, asset_id, limit=100):
+        return self.account_snapshots(offset, asset_id, order = "DESC", limit = limit)
+    def account_snapshots_after(self, offset, asset_id, limit=100):
+        return self.account_snapshots(offset, asset_id, order = "ASC", limit = limit)
+
+    def find_mysnapshot_in(self, in_snapshots):
+        mysnapshots_result = []
+        for singleSnapShot in in_snapshots:
+            if "user_id" in singleSnapShot and (singleSnapShot.get("user_id") == self.client_id):
+                mysnapshots_result.append(singleSnapShot)
+        return mysnapshots_result
+

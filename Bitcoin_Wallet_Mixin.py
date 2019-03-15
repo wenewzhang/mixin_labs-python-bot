@@ -99,9 +99,9 @@ def gen_memo_ExinBuy(asset_id_string):
 mixinApiBotInstance = MIXIN_API(mixin_config)
 
 PromptMsg = "0: Read first user from local file new_users.csv\n"
-PromptMsg += "1: Create user and update PIN\n2: Read account balance \n3: Read Bitcoin Address\n4: Read USDT balance\n"
-PromptMsg += "5: Read USDT address\n6: Pay USDT to ExinCore to buy BTC\n7: Read transaction of my account\n"
-PromptMsg += "8: transafer all asset to master of Mixin Messenger \n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
+PromptMsg += "1: \n2: Read account asset balance \n3: Read Bitcoin \n4: Read USDT\n"
+PromptMsg += "5: Read transaction of my account\n6: Pay USDT to ExinCore to buy BTC\n7: Create wallet and update PIN\n"
+PromptMsg += "8: transafer all asset to my account in Mixin Messenger \n9: Withdraw BTC to another Bitcoin wallet\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
 PromptMsg += "q: Exit \nMake your choose:"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
@@ -123,7 +123,7 @@ while ( 1 > 0 ):
                                                             userid,
                                                             pin,"")
             print("read user id:" + userid)
-    if ( cmd == '1' ):
+    if ( cmd == '7' ):
         key = RSA.generate(1024)
         pubkey = key.publickey()
         print(key.exportKey())
@@ -167,20 +167,14 @@ while ( 1 > 0 ):
             if (float(eachAssetInfo.get("balance")) > 0):
                 availableAssset.append(eachAssetInfo)
     if ( cmd == '3' ):
-        print("Read Bitcoin(uuid:%s) address" %(BTC_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-        print(btcInfo)
+        asset_result = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
+        btcInfo = asset_result.get("data")
+        print("%s: %s, depositAddress: %s" %(btcInfo.get("name"), btcInfo.get("balance"), btcInfo.get("public_key")))
 
     if ( cmd == '4' ):
-        print("Read USDT (uuid:%s) balance" %(USDT_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
-        print("Account %s \'s balance is %s  " %(mixinApiNewUserInstance.client_id ,btcInfo.get("data").get("balance")))
-        print('https://mixin.one/pay?recipient='+mixinApiNewUserInstance.client_id+'&asset='+USDT_ASSET_ID+'&amount=0.5&trace=' + str(uuid.uuid1()) + '&memo=depositUSDT')
-
-    if ( cmd == '5' ):
-        print("Read USDT (uuid:%s) address" %(USDT_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
-        print(btcInfo)
+        asset_result = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
+        usdtInfo = asset_result.get("data")
+        print("%s: %s, depositAddress: %s" %(usdtInfo.get("name"), usdtInfo.get("balance"), usdtInfo.get("public_key")))
 
     if ( cmd == '6' ):
         # Pack memo
@@ -197,7 +191,7 @@ while ( 1 > 0 ):
             transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid)
             snapShotID = transfer_result.get("data").get("snapshot_id")
             print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
-    if ( cmd == '7' ):
+    if ( cmd == '5' ):
         timestamp = input("input timestamp, history after the time will be searched:")
         limit = input("input max record you want to search:")
         snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots_after(timestamp, asset_id = "", limit=limit)

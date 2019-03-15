@@ -270,7 +270,6 @@ class MIXIN_API:
         # r = requests.post(url, data=body, headers=headers)
 # {'error': {'status': 202, 'code': 401, 'description': 'Unauthorized, maybe invalid token.'}}
         result_obj = r.json()
-        print(result_obj)
         return result_obj
 
     """

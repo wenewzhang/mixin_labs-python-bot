@@ -612,6 +612,11 @@ class MIXIN_API:
 
         result_json = self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
         return result_json.get('data')
+    def account_snapshots_before(self, offset, asset_id, limit=100):
+        return self.account_snapshots(offset, asset_id, order = "DESC", limit = limit)
+    def account_snapshots_after(self, offset, asset_id, limit=100):
+        return self.account_snapshots(offset, asset_id, order = "ASC", limit = limit)
+
     def find_mysnapshot_in(self, in_snapshots):
         mysnapshots_result = []
         for singleSnapShot in in_snapshots:

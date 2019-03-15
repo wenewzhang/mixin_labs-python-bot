@@ -96,9 +96,9 @@ def readAssetAddress(asset_id,isBTC = True):
 mixinApiBotInstance = MIXIN_API(mixin_config)
 
 PromptMsg = "0: Read first user from local file new_users.csv\n"
-PromptMsg += "1: Create user and update PIN\n2: Read Bitcoin balance \n3: Read Bitcoin Address\n4: Read USDT balance\n"
+PromptMsg += "1: Create user and update PIN\n2: Read account balance \n3: Read Bitcoin Address\n4: Read USDT balance\n"
 PromptMsg += "5: Read USDT address\n6: Pay USDT to ExinCore to buy BTC\n7: Read transaction of my account\n"
-PromptMsg += "8: transafer account Bitcoin to Mixin Messenger user\n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
+PromptMsg += "8: transafer all asset to master of Mixin Messenger \n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
 PromptMsg += "q: Exit \nMake your choose:"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
@@ -150,11 +150,19 @@ while ( 1 > 0 ):
         pinInfo2 = mixinApiNewUserInstance.verifyPin()
         print(pinInfo2)
     if ( cmd == '2' ):
-        print("Read Bitcoin(uuid:%s) balance" %(BTC_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-        print("Account %s \'s balance is %s  " %(mixinApiNewUserInstance.client_id ,btcInfo.get("data").get("balance")))
-        print('https://mixin.one/pay?recipient='+mixinApiNewUserInstance.client_id+'&asset='+BTC_ASSET_ID+'&amount=0.001&trace=' + str(uuid.uuid1()) + '&memo=depositBTC')
+        AssetsInfo = mixinApiNewUserInstance.getMyAssets()
+        print("Your asset balance is\n===========")
+        for eachAssest in AssetsInfo:
+            print("%s: %s" %(eachAssest.get("name"), eachAssest.get("balance")))
+        print("===========")
 
+
+        availableAssset = []
+        for eachAssetInfo in AssetsInfo: 
+            if (eachAssetInfo.get("balance") == "0"):
+                continue
+            if (float(eachAssetInfo.get("balance")) > 0):
+                availableAssset.append(eachAssetInfo)
     if ( cmd == '3' ):
         print("Read Bitcoin(uuid:%s) address" %(BTC_ASSET_ID))
         btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
@@ -243,16 +251,21 @@ while ( 1 > 0 ):
                     print("trace id of your payment to exincore is " + str(uuid.UUID(bytes = exin_order["O"])))
 # c6d0c728-2624-429b-8e0d-d9d19b6592fa
     if ( cmd == '8' ):
-        btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-        remainBTC= btcInfo.get("data").get("balance")
-        print("You have : " + remainBTC+ " BTC")
-        this_uuid = str(uuid.uuid1())
-        print("uuid is: " + this_uuid)
-        confirm_pay= input("type YES to pay " + remainBTC+ " to ExinCore to buy Bitcoin")
-        if ( confirm_pay== "YES" ):
-            transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, BTC_ASSET_ID, remainBTC, "", this_uuid)
-            snapShotID = transfer_result.get("data").get("snapshot_id")
-            print("Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
+        AssetsInfo = mixinApiNewUserInstance.getMyAssets()
+        availableAssset = []
+        for eachAssetInfo in AssetsInfo: 
+            if (eachAssetInfo.get("balance") == "0"):
+                continue
+            if (float(eachAssetInfo.get("balance")) > 0):
+                availableAssset.append(eachAssetInfo)
+                print("You have : " + eachAssetInfo.get("balance") + eachAssetInfo.get("name"))
+                this_uuid = str(uuid.uuid1())
+                print("uuid is: " + this_uuid)
+                confirm_pay= input("type YES to pay " + eachAssetInfo.get("balance")+ " to MASTER ")
+                if ( confirm_pay== "YES" ):
+                    transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, eachAssetInfo.get("asset_id"), eachAssetInfo.get("balance"), "", this_uuid)
+                    snapShotID = transfer_result.get("data").get("snapshot_id")
+                    print("Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '9' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

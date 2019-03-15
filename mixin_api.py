@@ -239,15 +239,9 @@ class MIXIN_API:
             token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
             auth_token = token.decode('utf8')
 
-            r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
-            result_obj = r.json()
-            snapshots_of_accoung = []
-            USDT_Snapshots = result_obj.get('data')
-            for singleSnapShot in USDT_Snapshots:
-                if "user_id" in singleSnapShot:
-                    snapshots_of_accoung.append(singleSnapShot)
-
-            return snapshots_of_accoung
+        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+        result_obj = r.json()
+        return result_obj
 
 
     """
@@ -615,4 +609,11 @@ class MIXIN_API:
         }
 
 
-        return self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
+        result_json = self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
+        snapshots_of_account = []
+        Snapshots = result_json.get('data')
+        for singleSnapShot in Snapshots:
+            if "user_id" in singleSnapShot and (singleSnapShot.get("user_id") == self.client_id):
+                snapshots_of_account.append(singleSnapShot)
+
+        return snapshots_of_account

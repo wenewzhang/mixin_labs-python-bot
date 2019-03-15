@@ -187,18 +187,25 @@ while ( 1 > 0 ):
             snapShotID = transfer_result.get("data").get("snapshot_id")
             print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == '7' ):
-        timestamp = input("input timestamp:")
-        USDT_Snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots(timestamp, asset_id = "", order='ASC',limit=500)
+        timestamp = input("input timestamp, history before the time will be searched:")
+        limit = input("input max record you want to search:")
+        USDT_Snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots(timestamp, asset_id = "", order='DSC',limit=limit)
         for singleSnapShot in USDT_Snapshots_result_of_account:
             print(singleSnapShot)
+            amount_snap = singleSnapShot.get("amount")
+            asset_snap = singleSnapShot.get("asset")
+            created_at_snap = singleSnapShot.get("created_at")
+            memo_at_snap = singleSnapShot.get("data")
+            id_snapshot = singleSnapShot.get("snapshot_id")
+            print([amount_snap, asset_snap, created_at_snap, memo_at_snap, id_snapshot])
     if ( cmd == '8' ):
         btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
         remainBTC= btcInfo.get("data").get("balance")
         print("You have : " + remainBTC+ " BTC")
         this_uuid = str(uuid.uuid1())
         print("uuid is: " + this_uuid)
-        confirm_pay= input("Input Yes to pay " + remainBTC+ " to ExinCore to buy Bitcoin")
-        if ( confirm_pay== "Yes" ):
+        confirm_pay= input("type YES to pay " + remainBTC+ " to ExinCore to buy Bitcoin")
+        if ( confirm_pay== "YES" ):
             transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, BTC_ASSET_ID, remainBTC, "", this_uuid)
             snapShotID = transfer_result.get("data").get("snapshot_id")
             print("Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)

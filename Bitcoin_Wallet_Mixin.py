@@ -100,6 +100,16 @@ def btc_balance_of(mixinApiInstance):
     asset_result = mixinApiInstance.getAsset(BTC_ASSET_ID)
     btcInfo = asset_result.get("data")
     return btcInfo.get("balance")
+def strPresent_of_btc_withdrawaddress(thisAddress):
+    address_id = thisAddress.get("address_id")
+    address_pubkey = thisAddress.get("public_key")
+    address_label = thisAddress.get("label")
+    address_accountname = thisAddress.get("account_name")
+    address_accounttag = thisAddress.get("account_tag")
+    address_fee = thisAddress.get("fee")
+    address_dust = thisAddress.get("dust")
+    Address = "tag: %s,  id: %s, address: %s, fee: %s, dust: %s"%(address_label, address_id, address_pubkey, address_fee, address_dust)
+    return Address
     
 mixinApiBotInstance = MIXIN_API(mixin_config)
 
@@ -107,7 +117,7 @@ PromptMsg  = "Read first user from local file new_users.csv        : loaduser\n"
 PromptMsg += "Read account asset balance                           : balance\n"
 PromptMsg += "Read Bitcoin                                         : btcbalance\n"
 PromptMsg += "Read USDT                                            : usdtbalance\n"
-PromptMsg += "Read transaction of my account                       : transaction\n"
+PromptMsg += "Read transaction of my account                       : searchsnapshots\n"
 PromptMsg += "Read one snapshots info of account                   : snapshot\n"
 PromptMsg += "Pay USDT to ExinCore to buy BTC                      : buybtc\n"
 PromptMsg += "Create wallet and update PIN                         : create\n"
@@ -168,7 +178,7 @@ while ( 1 > 0 ):
     if ( cmd == 'snapshot'):
         input_snapshotid = input('input snapshots id')
         print(mixinApiNewUserInstance.account_snapshot(input_snapshotid))
-    if ( cmd == 'transaction'):
+    if ( cmd == 'searchsnapshots'):
         timestamp = input("input timestamp, history after the time will be searched:")
         limit = input("input max record you want to search:")
         snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots_after(timestamp, asset_id = "", limit=limit)
@@ -296,34 +306,16 @@ while ( 1 > 0 ):
     if ( cmd == 'listaddress' ):
         BTC_withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(BTC_ASSET_ID)
         BTC_withdraw_addresses = BTC_withdraw_addresses_result.get("data")
-        i = 0
         print("BTC address is:=======")
         for eachAddress in BTC_withdraw_addresses:
-            address_id = eachAddress.get("address_id")
-            address_pubkey = eachAddress.get("public_key")
-            address_label = eachAddress.get("label")
-            address_accountname = eachAddress.get("account_name")
-            address_accounttag = eachAddress.get("account_tag")
-            address_fee = eachAddress.get("fee")
-            address_dust = eachAddress.get("dust")
-            btcAddress = "index %d:, tag: %s,  id: %s, address: %s, fee: %s, dust: %s"%(i, address_label, address_id, address_pubkey, address_fee, address_dust)
+            btcAddress = strPresent_of_btc_withdrawaddress(eachAddress)
             print(btcAddress)
-            i = i + 1
         print("USDT address is:=======")
         USDT_withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(USDT_ASSET_ID)
         USDT_withdraw_addresses = USDT_withdraw_addresses_result.get("data")
-        i = 0
         for eachAddress in USDT_withdraw_addresses:
-            address_id = eachAddress.get("address_id")
-            address_pubkey = eachAddress.get("public_key")
-            address_label = eachAddress.get("label")
-            address_accountname = eachAddress.get("account_name")
-            address_accounttag = eachAddress.get("account_tag")
-            address_fee = eachAddress.get("fee")
-            address_dust = eachAddress.get("dust")
-            btcAddress = "index %d:, tag: %s,  id: %s, address: %s, fee: %s, dust: %s"%(i, address_label, address_id, address_pubkey, address_fee, address_dust)
-            print(btcAddress)
-            i = i + 1
+            usdtAddress = strPresent_of_btc_withdrawaddress(eachAddress)
+            print(usdtAddress)
 
     if ( cmd == 'addbitcoinaddress' ):
         BTC_depost_address = input("Bitcoin depost address:")
@@ -348,28 +340,15 @@ while ( 1 > 0 ):
         i = 0
         print("BTC address is:=======")
         for eachAddress in BTC_withdraw_addresses:
-            address_id = eachAddress.get("address_id")
-            address_pubkey = eachAddress.get("public_key")
-            address_label = eachAddress.get("label")
-            address_accountname = eachAddress.get("account_name")
-            address_accounttag = eachAddress.get("account_tag")
-            address_fee = eachAddress.get("fee")
-            address_dust = eachAddress.get("dust")
-            btcAddress = "index %d:, tag: %s,  id: %s, address: %s, fee: %s, dust: %s"%(i, address_label, address_id, address_pubkey, address_fee, address_dust)
-            print(btcAddress)
+            btcAddress = strPresent_of_btc_withdrawaddress(eachAddress)
+            print("index %d, %s"%(i, btcAddress))
             i = i + 1
 
         userselect = input("which address index you want to remove")
         if (int(userselect) < i):
             eachAddress = BTC_withdraw_addresses[int(userselect)]
             address_id = eachAddress.get("address_id")
-            address_pubkey = eachAddress.get("public_key")
-            address_label = eachAddress.get("label")
-            address_accountname = eachAddress.get("account_name")
-            address_accounttag = eachAddress.get("account_tag")
-            address_fee = eachAddress.get("fee")
-            address_dust = eachAddress.get("dust")
-            btcAddress = "index %d:, tag: %s, address: %s"%(int(userselect), address_label, address_pubkey)
+            btcAddress = "index %d: %s"%(int(userselect), strPresent_of_btc_withdrawaddress(eachAddress))
             confirm = input("Type YES to remove " + btcAddress + "!!:")
             if (confirm == "YES"):
                 mixinApiNewUserInstance.delAddress(address_id)
@@ -382,28 +361,15 @@ while ( 1 > 0 ):
         i = 0
         print("BTC address is:=======")
         for eachAddress in USDT_withdraw_addresses:
-            address_id = eachAddress.get("address_id")
-            address_pubkey = eachAddress.get("public_key")
-            address_label = eachAddress.get("label")
-            address_accountname = eachAddress.get("account_name")
-            address_accounttag = eachAddress.get("account_tag")
-            address_fee = eachAddress.get("fee")
-            address_dust = eachAddress.get("dust")
-            Address = "index %d:, tag: %s,  id: %s, address: %s, fee: %s, dust: %s"%(i, address_label, address_id, address_pubkey, address_fee, address_dust)
-            print(Address)
+            usdtAddress = strPresent_of_btc_withdrawaddress(eachAddress)
+            print("index %d, %s"%(i, usdtAddress))
             i = i + 1
 
         userselect = input("which address index you want to remove")
         if (int(userselect) < i):
             eachAddress = USDT_withdraw_addresses[int(userselect)]
             address_id = eachAddress.get("address_id")
-            address_pubkey = eachAddress.get("public_key")
-            address_label = eachAddress.get("label")
-            address_accountname = eachAddress.get("account_name")
-            address_accounttag = eachAddress.get("account_tag")
-            address_fee = eachAddress.get("fee")
-            address_dust = eachAddress.get("dust")
-            Address = "index %d:, tag: %s, address: %s"%(int(userselect), address_label, address_pubkey)
+            Address = "index %d: %s"%(int(userselect), strPresent_of_btc_withdrawaddress(eachAddress))
             confirm = input("Type YES to remove " + Address + "!!:")
             if (confirm == "YES"):
                 mixinApiNewUserInstance.delAddress(address_id)

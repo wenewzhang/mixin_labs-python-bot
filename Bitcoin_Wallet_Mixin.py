@@ -123,6 +123,25 @@ def strPresent_of_btc_withdrawaddress(thisAddress):
 def strPresent_of_usdt_withdrawaddress(thisAddress):
     return strPresent_of_asset_withdrawaddress(thisAddress, USDT_ASSET_ID)
 
+def remove_withdraw_address_of(mixinApiUserInstance, withdraw_asset_id, withdraw_asset_name):
+    USDT_withdraw_addresses_result = mixinApiUserInstance.withdrawals_address(withdraw_asset_id)
+    USDT_withdraw_addresses = USDT_withdraw_addresses_result.get("data")
+    i = 0
+    print("%s withdraw address is:======="%withdraw_asset_name)
+    for eachAddress in USDT_withdraw_addresses:
+        usdtAddress = strPresent_of_usdt_withdrawaddress(eachAddress)
+        print("index %d, %s"%(i, usdtAddress))
+        i = i + 1
+
+    userselect = input("which address index you want to remove")
+    if (int(userselect) < i):
+        eachAddress = USDT_withdraw_addresses[int(userselect)]
+        address_id = eachAddress.get("address_id")
+        Address = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
+        confirm = input("Type YES to remove " + Address + "!!:")
+        if (confirm == "YES"):
+            mixinApiUserInstance.delAddress(address_id)
+ 
 def withdraw_asset(withdraw_asset_id, withdraw_asset_name):
     this_asset_balance = asset_balance(mixinApiNewUserInstance, withdraw_asset_id)
     withdraw_amount = input("%s %s in your account, how many %s you want to withdraw: "%(withdraw_asset_name, this_asset_balance, withdraw_asset_name))
@@ -394,25 +413,8 @@ while ( 1 > 0 ):
             
  
 
-    if ( cmd == " removeusdtaddress "):
-        USDT_withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(USDT_ASSET_ID)
-        USDT_withdraw_addresses = USDT_withdraw_addresses_result.get("data")
-        i = 0
-        print("USDT address is:=======")
-        for eachAddress in USDT_withdraw_addresses:
-            usdtAddress = strPresent_of_usdt_withdrawaddress(eachAddress)
-            print("index %d, %s"%(i, usdtAddress))
-            i = i + 1
-
-        userselect = input("which address index you want to remove")
-        if (int(userselect) < i):
-            eachAddress = USDT_withdraw_addresses[int(userselect)]
-            address_id = eachAddress.get("address_id")
-            Address = "index %d: %s"%(int(userselect), strPresent_of_usdt_withdrawaddress(eachAddress))
-            confirm = input("Type YES to remove " + Address + "!!:")
-            if (confirm == "YES"):
-                mixinApiNewUserInstance.delAddress(address_id)
- 
+    if ( cmd == "removeusdtaddress"):
+        remove_withdraw_address_of(mixinApiNewUserInstance, USDT_ASSET_ID, "USDT")
         print("removeusdtaddress")
     if ( cmd == 'withdrawbtc' ):
         result = withdraw_asset(BTC_ASSET_ID, "BTC")

@@ -122,6 +122,34 @@ def strPresent_of_btc_withdrawaddress(thisAddress):
     
 def strPresent_of_usdt_withdrawaddress(thisAddress):
     return strPresent_of_asset_withdrawaddress(thisAddress, USDT_ASSET_ID)
+
+def withdraw_asset(withdraw_asset_id, withdraw_asset_name):
+    this_asset_balance = asset_balance(mixinApiNewUserInstance, withdraw_asset_id)
+    withdraw_amount = input("%s %s in your account, how many %s you want to withdraw: "%(withdraw_asset_name, this_asset_balance, withdraw_asset_name))
+    withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(withdraw_asset_id)
+    withdraw_addresses = withdraw_addresses_result.get("data")
+    i = 0
+    print("current " + withdraw_asset_name +" address:=======")
+    for eachAddress in withdraw_addresses:
+        Address = "index %d: %s"%(i, strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
+        print(Address)
+        i = i + 1
+
+    userselect = input("which address index is your destination")
+    if (int(userselect) < i):
+        eachAddress = withdraw_addresses[int(userselect)]
+        address_id = eachAddress.get("address_id")
+        address_pubkey = eachAddress.get("public_key")
+        address_selected = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
+        confirm = input("Type YES to withdraw " + withdraw_amount + withdraw_asset_name + " to " + address_selected + "!!:")
+        if (confirm == "YES"):
+            this_uuid = str(uuid.uuid1())
+            asset_withdraw_result = mixinApiNewUserInstance.withdrawals(address_id, withdraw_amount, "withdraw2"+address_pubkey, this_uuid)
+            return asset_withdraw_result
+    return None
+
+
+
 mixinApiBotInstance = MIXIN_API(mixin_config)
 
 PromptMsg  = "Read first user from local file new_users.csv        : loaduser\n"
@@ -412,29 +440,9 @@ while ( 1 > 0 ):
     if ( cmd == 'withdrawusdt' ):
         withdraw_asset_id = USDT_ASSET_ID
         withdraw_asset_name = "usdt"
-        this_asset_balance = asset_balance(mixinApiNewUserInstance, withdraw_asset_id)
-        withdraw_amount = input("%s %s in your account, how many %s you want to withdraw: "%(withdraw_asset_name, this_asset_balance, withdraw_asset_name))
-        withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(withdraw_asset_id)
-        withdraw_addresses = withdraw_addresses_result.get("data")
-        i = 0
-        print("current " + withdraw_asset_name +" address:=======")
-        for eachAddress in withdraw_addresses:
-            Address = "index %d: %s"%(i, strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
-            print(Address)
-            i = i + 1
-
-        userselect = input("which address index is your destination")
-        if (int(userselect) < i):
-            eachAddress = withdraw_addresses[int(userselect)]
-            address_id = eachAddress.get("address_id")
-            address_pubkey = eachAddress.get("public_key")
-            address_selected = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
-            confirm = input("Type YES to withdraw " + withdraw_amount + withdraw_asset_name + " to " + address_selected + "!!:")
-            if (confirm == "YES"):
-                this_uuid = str(uuid.uuid1())
-                asset_withdraw_result = mixinApiNewUserInstance.withdrawals(address_id, withdraw_amount, "withdraw2"+address_pubkey, this_uuid)
-                print(asset_withdraw_result)
-
+        result = withdraw_asset(USDT_ASSET_ID, "USDT")
+        if (result != None):
+            print(result)
 
     if ( cmd == 'a' ):
         with open('new_users.csv', newline='') as csvfile:

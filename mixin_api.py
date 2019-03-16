@@ -229,16 +229,18 @@ class MIXIN_API:
     def __genNetworkGetRequest_snapshots(self, path, body=None, auth_token=""):
         if body is not None:
             body = urlencode(body)
+            url = self.__genUrl(path+"?" + body)
+            if auth_token == "":
+                token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
+                auth_token = token.decode('utf8')
+
+
         else:
             body = ""
-
-
-        url = self.__genUrl(path+"?" + body)
-
-        if auth_token == "":
-            token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
-            auth_token = token.decode('utf8')
-
+            url = self.__genUrl(path)
+            if auth_token == "":
+                token = self.genGETJwtToken(path, "", str(uuid.uuid4()))
+                auth_token = token.decode('utf8')
         r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
         result_obj = r.json()
         return result_obj
@@ -437,7 +439,7 @@ class MIXIN_API:
     Tips:Get assets out of Mixin Network, neet to create an address for withdrawal.
     """
     def withdrawals(self, address_id, amount, memo, trace_id=""):
-        encrypted_pin = self.genEncrypedPin()
+        encrypted_pin = self.genEncrypedPin().decode()
 
         if trace_id == "":
             trace_id = str(uuid.uuid1())
@@ -448,10 +450,9 @@ class MIXIN_API:
             "amount": amount,
             "trace_id": trace_id,
             "memo": memo
-
         }
 
-        return self.__genNetworkPostRequest('/withdrawals/', body)
+        return self.__genNetworkPostRequest('/withdrawals', body)
 
 
     """
@@ -602,6 +603,11 @@ class MIXIN_API:
     """
     def snapshot(self, snapshot_id):
         return self.__genGetRequest('/network/snapshots/' + snapshot_id)
+    """
+    """
+
+    def account_snapshot(self, snapshot_id):
+        return self.__genNetworkGetRequest_snapshots('/network/snapshots/' + snapshot_id)
     """
     Read this account snapshots of Mixin Network. Beaer token is required
     """

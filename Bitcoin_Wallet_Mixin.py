@@ -413,7 +413,7 @@ while ( 1 > 0 ):
         withdraw_asset_id = USDT_ASSET_ID
         withdraw_asset_name = "usdt"
         this_asset_balance = asset_balance(mixinApiNewUserInstance, withdraw_asset_id)
-        usdt_amount = input("%s %s in your account, how many %s you want to withdraw: "%(withdraw_asset_name, this_asset_balance, withdraw_asset_name))
+        withdraw_amount = input("%s %s in your account, how many %s you want to withdraw: "%(withdraw_asset_name, this_asset_balance, withdraw_asset_name))
         withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(withdraw_asset_id)
         withdraw_addresses = withdraw_addresses_result.get("data")
         i = 0
@@ -428,12 +428,12 @@ while ( 1 > 0 ):
             eachAddress = withdraw_addresses[int(userselect)]
             address_id = eachAddress.get("address_id")
             address_pubkey = eachAddress.get("public_key")
-            usdtaddress = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
-            confirm = input("Type YES to withdraw " + usdt_amount + withdraw_asset_name + " to " + usdtaddress + "!!:")
+            address_selected = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
+            confirm = input("Type YES to withdraw " + withdraw_amount + withdraw_asset_name + " to " + address_selected + "!!:")
             if (confirm == "YES"):
                 this_uuid = str(uuid.uuid1())
-                usdt_withdraw_result = mixinApiNewUserInstance.withdrawals(address_id, usdt_amount, "withdraw2"+address_pubkey, this_uuid)
-                print(usdt_withdraw_result)
+                asset_withdraw_result = mixinApiNewUserInstance.withdrawals(address_id, withdraw_amount, "withdraw2"+address_pubkey, this_uuid)
+                print(asset_withdraw_result)
 
 
     if ( cmd == 'a' ):

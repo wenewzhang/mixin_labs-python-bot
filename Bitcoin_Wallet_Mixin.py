@@ -332,17 +332,16 @@ while ( 1 > 0 ):
                                 userInfo.get("data").get("pin_token"),
                                 userInfo.get("data").get("session_id"),
                                 userInfo.get("data").get("user_id"),
-                                PIN])
+                                ""])
         mixinApiNewUserInstance = generateMixinAPI(private_key.decode(),
                                                     userInfo.get("data").get("pin_token"),
                                                     userInfo.get("data").get("session_id"),
                                                     userInfo.get("data").get("user_id"),
-                                                    PIN,"")
+                                                    "","")
         defauled_pin = input("input pin:")
         pinInfo = mixinApiNewUserInstance.updatePin(defauled_pin,"")
         print(pinInfo)
         time.sleep(3)
-        # mixinApiNewUserInstance.pay_pin = PIN
         pinInfo2 = mixinApiNewUserInstance.verifyPin(defauled_pin)
         print(pinInfo2)
 

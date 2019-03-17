@@ -399,14 +399,12 @@ class MIXIN_API:
             }
         else:
             oldEncryptedPin = self.genEncrypedPin_withPin(old_pin)
-            time.sleep(1)
             newEncrypedPin = self.genEncrypedPin_withPin(new_pin)
 
             body = {
                 "old_pin": oldEncryptedPin.decode(),
                 "pin": newEncrypedPin.decode()
             }
-        print(body)
         return self.__genNetworkPostRequest('/pin/update', body, auth_token)
 
     """

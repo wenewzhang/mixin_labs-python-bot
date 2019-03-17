@@ -324,8 +324,15 @@ while ( 1 > 0 ):
         private_key = key.exportKey()
         session_key = pubkeyContent(pubkey.exportKey())
         # print(session_key)
+        input_session = session_key.decode()
+        account_name  = "Tom Bot"
         print(session_key.decode())
-        userInfo = mixinApiBotInstance.createUser(session_key.decode(),"Tom Bot")
+        body = {
+            "session_secret": input_session,
+            "full_name": account_name
+        }
+        token_from_freeweb = self.generateTokenForCreateUser(body)
+        userInfo = mixinApiBotInstance.createUser(input_session, account_name, token_from_freeweb)
         print(userInfo.get("data").get("user_id"))
         with open('new_users.csv', 'a', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)

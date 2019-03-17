@@ -554,12 +554,12 @@ class MIXIN_API:
         }
 
         return self.__genNetworkGetRequest('/external/transactions', body)
-    def generateTokenForCreateUser(self, body):
+    def generateTokenForCreateUser(self, body, url = "http://127.0.0.1:5000/token"):
         body_in_json = json.dumps(body)
         headers = {
             'Content-Type'  : 'application/json',
         }
-        r = requests.post("http://127.0.0.1:5000/token", json=body, headers=headers)
+        r = requests.post(url, json=body, headers=headers)
         result_obj = r.json()
         print(result_obj)
         return result_obj.get("token")
@@ -569,14 +569,14 @@ class MIXIN_API:
     """
     Create a new Mixin Network user (like a normal Mixin Messenger user). You should keep PrivateKey which is used to sign an AuthenticationToken and encrypted PIN for the user.
     """
-    def createUser(self, session_secret, full_name):
+    def createUser(self, session_secret, full_name, auth_token = ""):
 
         body = {
             "session_secret": session_secret,
             "full_name": full_name
         }
 
-        return self.__genNetworkPostRequest('/users', body, self.generateTokenForCreateUser(body))
+        return self.__genNetworkPostRequest('/users', body, auth_token)
 
 
     """

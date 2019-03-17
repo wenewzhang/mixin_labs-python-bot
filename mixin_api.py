@@ -554,7 +554,7 @@ class MIXIN_API:
         }
 
         return self.__genNetworkGetRequest('/external/transactions', body)
-    def generateTokenForCreateUser(self, body, url = "http://127.0.0.1:5000/token"):
+    def fetchTokenForCreateUser(self, body, url):
         body_in_json = json.dumps(body)
         headers = {
             'Content-Type'  : 'application/json',

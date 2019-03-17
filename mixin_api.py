@@ -437,11 +437,8 @@ class MIXIN_API:
     withdrawals robot asset to address_id
     Tips:Get assets out of Mixin Network, neet to create an address for withdrawal.
     """
-    def withdrawals(self, address_id, amount, memo, trace_id=""):
-        encrypted_pin = self.genEncrypedPin().decode()
-
-        if trace_id == "":
-            trace_id = str(uuid.uuid1())
+    def withdrawals(self, address_id, amount, memo, trace_id, asset_pin):
+        encrypted_pin = self.genEncrypedPin_withPin(asset_pin).decode()
 
         body = {
             "address_id": address_id,

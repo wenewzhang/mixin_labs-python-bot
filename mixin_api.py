@@ -87,8 +87,7 @@ class MIXIN_API:
         exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=200)
         encoded = jwt.encode({'uid':self.client_id, 'sid':self.pay_session_id,'iat':iat,'exp': exp, 'jti':jti,'sig':jwtSig}, self.private_key, algorithm='RS512')
         return encoded
-
-    def genEncrypedPin(self, iterString = None):
+    def genEncrypedPin_withPin(self, self_pay_pin, iterString = None):
         if self.keyForAES == "":
             privKeyObj = RSA.importKey(self.private_key)
 
@@ -135,9 +134,9 @@ class MIXIN_API:
             tsseven = chr(tsseven)
             iterStringByTS = tszero + tsone + tstwo + tsthree + tsfour + tsfive + tssix + tsseven
 
-            toEncryptContent = self.pay_pin + tsstring + iterStringByTS
+            toEncryptContent = self_pay_pin + tsstring + iterStringByTS
         else:
-            toEncryptContent = self.pay_pin + tsstring + iterString
+            toEncryptContent = self_pay_pin + tsstring + iterString
 
         lenOfToEncryptContent = len(toEncryptContent)
         toPadCount = 16 - lenOfToEncryptContent % 16
@@ -157,6 +156,9 @@ class MIXIN_API:
 
         return encrypted_pin
 
+
+    def genEncrypedPin(self, iterString = None):
+        return self.genEncrypedPin_withPin(self.pay_pin)
     """
     COMMON METHON
     """
@@ -413,8 +415,8 @@ class MIXIN_API:
     if auth_token is empty, it verify robot' pin.
     if auth_token is set, it verify messenger user pin.
     """
-    def verifyPin(self, auth_token=""):
-        enPin = self.genEncrypedPin()
+    def verifyPin(self, input_pin, auth_token=""):
+        enPin = self.genEncrypedPin_withPin(input_pin)
         body = {
             "pin": enPin.decode()
         }
@@ -501,10 +503,13 @@ class MIXIN_API:
     """
     Transfer of assets between Mixin Network users.
     """
-    def transferTo(self, to_user_id, to_asset_id, to_asset_amount, memo, trace_uuid=""):
+    def transferTo(self, to_user_id, to_asset_id, to_asset_amount, memo, trace_uuid="", input_pin = ""):
 
         # generate encrypted pin
-        encrypted_pin = self.genEncrypedPin()
+        if (input_pin == ""):
+            encrypted_pin = self.genEncrypedPin()
+        else:
+            encrypted_pin = self.genEncrypedPin_withPin(input_pin)
 
         body = {'asset_id': to_asset_id, 'counter_user_id': to_user_id, 'amount': str(to_asset_amount),
                 'pin': encrypted_pin.decode('utf8'), 'trace_id': trace_uuid, 'memo': memo}

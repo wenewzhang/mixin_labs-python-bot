@@ -187,8 +187,8 @@ PromptMsg += "Remove withdraw address for Bitcoin                  : removebtcad
 PromptMsg += "Remove withdraw address for Bitcoin                  : removeusdtaddress\n"
 PromptMsg += "Withdraw BTC                                         : withdrawbtc\n"
 PromptMsg += "Withdraw USDT                                        : withdrawusdt\n"
-PromptMsg += "Create Address and Delete it                         : a\n"
-PromptMsg += "Create Address and read it :                         : r\n"
+PromptMsg += "verify pin                                           : verifypin\n"
+PromptMsg += "updatepin                                            : updatepin\n"
 PromptMsg += "Exit                                                 : q\n"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
@@ -310,7 +310,8 @@ while ( 1 > 0 ):
         print("uuid is: " + this_uuid)
         confirm_payUSDT = input("Input Yes to pay " + remainUSDT + " to ExinCore to buy Bitcoin")
         if ( confirm_payUSDT == "Yes" ):
-            transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid)
+            input_pin = input("pin code:")
+            transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid, input_pin)
             snapShotID = transfer_result.get("data").get("snapshot_id")
             print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
     if ( cmd == 'create' ):
@@ -340,7 +341,7 @@ while ( 1 > 0 ):
         print(pinInfo)
         time.sleep(3)
         # mixinApiNewUserInstance.pay_pin = PIN
-        pinInfo2 = mixinApiNewUserInstance.verifyPin()
+        pinInfo2 = mixinApiNewUserInstance.verifyPin(PIN)
         print(pinInfo2)
 
 # c6d0c728-2624-429b-8e0d-d9d19b6592fa
@@ -410,43 +411,13 @@ while ( 1 > 0 ):
         if (result != None):
             print(result)
 
-    if ( cmd == 'a' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiNewUserInstance.verifyPin()
-                print(btcInfo)
-    if ( cmd == 'd' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
-                addr_id = btcInfo.get("data").get("address_id")
-                print(addr_id)
-                delInfo = mixinApiBotInstance.delAddress(addr_id)
-                print(delInfo)
+    if ( cmd == 'verifypin' ):
+        input_pin = input("input your account pin:")
+        print(mixinApiNewUserInstance.verifyPin(input_pin))
+    if ( cmd == 'updatepin' ):
+        newPin = input("input new pin")
+        oldPin = input("input old pin")
+        mixinApiNewUserInstance.updatePin(newPin,oldPin)
     if ( cmd == 'r' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

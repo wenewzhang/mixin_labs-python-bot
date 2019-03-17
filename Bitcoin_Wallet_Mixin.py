@@ -423,23 +423,3 @@ while ( 1 > 0 ):
         newPin = input("input new pin:")
         oldPin = input("input old pin:")
         print(mixinApiNewUserInstance.updatePin(newPin,oldPin))
-    if ( cmd == 'r' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
-                addr_id = btcInfo.get("data").get("address_id")
-                print(addr_id)
-                addrInfo = mixinApiBotInstance.getAddress(addr_id)
-                print(addrInfo)

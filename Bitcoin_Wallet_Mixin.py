@@ -164,7 +164,8 @@ def withdraw_asset(withdraw_asset_id, withdraw_asset_name):
         confirm = input("Type YES to withdraw " + withdraw_amount + withdraw_asset_name + " to " + address_selected + "!!:")
         if (confirm == "YES"):
             this_uuid = str(uuid.uuid1())
-            asset_withdraw_result = mixinApiNewUserInstance.withdrawals(address_id, withdraw_amount, "withdraw2"+address_pubkey, this_uuid)
+            asset_pin = input("pin:")
+            asset_withdraw_result = mixinApiNewUserInstance.withdrawals(address_id, withdraw_amount, "withdraw2"+address_pubkey, this_uuid, asset_pin)
             return asset_withdraw_result
     return None
 

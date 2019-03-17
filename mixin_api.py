@@ -81,10 +81,10 @@ class MIXIN_API:
         return signature
 
 
-    def genPOSTJwtToken(self, uristring, bodystring, jti):
+    def genPOSTJwtToken(self, uristring, bodystring, jti, expseconds = 200):
         jwtSig = self.genPOSTSig(uristring, bodystring)
         iat = datetime.datetime.utcnow()
-        exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=200)
+        exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=expseconds)
         encoded = jwt.encode({'uid':self.client_id, 'sid':self.pay_session_id,'iat':iat,'exp': exp, 'jti':jti,'sig':jwtSig}, self.private_key, algorithm='RS512')
         return encoded
     def genEncrypedPin_withPin(self, self_pay_pin, iterString = None):
@@ -250,7 +250,7 @@ class MIXIN_API:
 
     def generateTokenForCreateUser(body):
         body_in_json = json.dumps(body)
-        token = self.genPOSTJwtToken("/users", body_in_json, str(uuid.uuid4()))
+        token = self.genPOSTJwtToken("/users", body_in_json, str(uuid.uuid4()), 20)
         return token.decode('utf8')
 
 

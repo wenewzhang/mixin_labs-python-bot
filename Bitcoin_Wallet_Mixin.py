@@ -331,7 +331,7 @@ while ( 1 > 0 ):
             "session_secret": input_session,
             "full_name": account_name
         }
-        token_from_freeweb = self.generateTokenForCreateUser(body)
+        token_from_freeweb = mixinApiBotInstance.fetchTokenForCreateUser(body,  "http://127.0.0.1:5000/token")
         userInfo = mixinApiBotInstance.createUser(input_session, account_name, token_from_freeweb)
         print(userInfo.get("data").get("user_id"))
         with open('new_users.csv', 'a', newline='') as csvfile:

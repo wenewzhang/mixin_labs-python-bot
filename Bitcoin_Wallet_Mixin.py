@@ -337,17 +337,19 @@ while ( 1 > 0 ):
                                                     userInfo.get("data").get("session_id"),
                                                     userInfo.get("data").get("user_id"),
                                                     PIN,"")
-        pinInfo = mixinApiNewUserInstance.updatePin(PIN,"")
+        defauled_pin = input("input pin:")
+        pinInfo = mixinApiNewUserInstance.updatePin(defauled_pin,"")
         print(pinInfo)
         time.sleep(3)
         # mixinApiNewUserInstance.pay_pin = PIN
-        pinInfo2 = mixinApiNewUserInstance.verifyPin(PIN)
+        pinInfo2 = mixinApiNewUserInstance.verifyPin(defauled_pin)
         print(pinInfo2)
 
 # c6d0c728-2624-429b-8e0d-d9d19b6592fa
     if ( cmd == 'allmoney' ):
         AssetsInfo = mixinApiNewUserInstance.getMyAssets()
         availableAssset = []
+        my_pin = input("pin:")
         for eachAssetInfo in AssetsInfo: 
             if (eachAssetInfo.get("balance") == "0"):
                 continue
@@ -358,7 +360,7 @@ while ( 1 > 0 ):
                 print("uuid is: " + this_uuid)
                 confirm_pay= input("type YES to pay " + eachAssetInfo.get("balance")+ " to MASTER:")
                 if ( confirm_pay== "YES" ):
-                    transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, eachAssetInfo.get("asset_id"), eachAssetInfo.get("balance"), "", this_uuid)
+                    transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, eachAssetInfo.get("asset_id"), eachAssetInfo.get("balance"), "", this_uuid, my_pin)
                     snapShotID = transfer_result.get("data").get("snapshot_id")
                     created_at = transfer_result.get("data").get("created_at")
                     print(created_at + ":Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
@@ -415,9 +417,9 @@ while ( 1 > 0 ):
         input_pin = input("input your account pin:")
         print(mixinApiNewUserInstance.verifyPin(input_pin))
     if ( cmd == 'updatepin' ):
-        newPin = input("input new pin")
-        oldPin = input("input old pin")
-        mixinApiNewUserInstance.updatePin(newPin,oldPin)
+        newPin = input("input new pin:")
+        oldPin = input("input old pin:")
+        print(mixinApiNewUserInstance.updatePin(newPin,oldPin))
     if ( cmd == 'r' ):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)

@@ -391,23 +391,22 @@ class MIXIN_API:
     if auth_token is set, it create messenger user pin.
     """
     def updatePin(self, new_pin, old_pin, auth_token=""):
-        old_inside_pay_pin = self.pay_pin
-        self.pay_pin = new_pin
-        newEncrypedPin = self.genEncrypedPin()
         if old_pin == "":
+            newEncrypedPin = self.genEncrypedPin_withPin(new_pin)
             body = {
                 "old_pin": "",
                 "pin": newEncrypedPin.decode()
             }
         else:
+            oldEncryptedPin = self.genEncrypedPin_withPin(old_pin)
+            time.sleep(1)
+            newEncrypedPin = self.genEncrypedPin_withPin(new_pin)
 
-            self.pay_pin = old_pin
-            oldEncryptedPin = self.genEncrypedPin()
             body = {
                 "old_pin": oldEncryptedPin.decode(),
                 "pin": newEncrypedPin.decode()
             }
-        self.pay_pin = old_inside_pay_pin
+        print(body)
         return self.__genNetworkPostRequest('/pin/update', body, auth_token)
 
     """

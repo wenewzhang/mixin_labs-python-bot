@@ -254,10 +254,8 @@ class MIXIN_API:
     # TODO: request
     def __genNetworkPostRequest(self, path, body, auth_token=""):
 
-        # transfer obj => json string
         body_in_json = json.dumps(body)
 
-        # generate robot's auth token
         if auth_token == "":
             token = self.genPOSTJwtToken(path, body_in_json, str(uuid.uuid4()))
             auth_token = token.decode('utf8')
@@ -265,14 +263,9 @@ class MIXIN_API:
             'Content-Type'  : 'application/json',
             'Authorization' : 'Bearer ' + auth_token,
         }
-        # generate url
         url = self.__genUrl(path)
 
         r = requests.post(url, json=body, headers=headers)
-# {'error': {'status': 202, 'code': 20118, 'description': 'Invalid PIN format.'}}
-
-        # r = requests.post(url, data=body, headers=headers)
-# {'error': {'status': 202, 'code': 401, 'description': 'Unauthorized, maybe invalid token.'}}
         result_obj = r.json()
         return result_obj
 

@@ -140,7 +140,8 @@ def remove_withdraw_address_of(mixinApiUserInstance, withdraw_asset_id, withdraw
         Address = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
         confirm = input("Type YES to remove " + Address + "!!:")
         if (confirm == "YES"):
-            mixinApiUserInstance.delAddress(address_id)
+            input_pin = input("pin:")
+            mixinApiUserInstance.delAddress(address_id, input_pin)
  
 def withdraw_asset(withdraw_asset_id, withdraw_asset_name):
     this_asset_balance = asset_balance(mixinApiNewUserInstance, withdraw_asset_id)
@@ -383,17 +384,20 @@ while ( 1 > 0 ):
         Confirm = input(BTC_depost_address + ", Type YES to confirm")
         if (Confirm == "YES"):
             tag_content = input("write a tag")
-            add_BTC_withdraw_addresses_result = mixinApiNewUserInstance.createAddress(BTC_ASSET_ID, BTC_depost_address, tag_content)
+            input_pin = input("pin:")
+            add_BTC_withdraw_addresses_result = mixinApiNewUserInstance.createAddress(BTC_ASSET_ID, BTC_depost_address, tag_content, asset_pin = input_pin)
             address_id = add_BTC_withdraw_addresses_result.get("data").get("address_id")
             print("the address :" + BTC_depost_address + " is added to your account with id:" + address_id)
     if ( cmd == 'addusdtaddress' ):
         USDT_depost_address = input("usdt withdraw address:")
         Confirm = input(USDT_depost_address + ", Type YES to confirm")
         if (Confirm == "YES"):
-            tag_content = input("write a tag")
-            USDT_withdraw_addresses = mixinApiNewUserInstance.createAddress(USDT_ASSET_ID, USDT_depost_address, tag_content)
-            print(USDT_withdraw_addresses)
+            tag_content = input("tag:")
+            input_pin = input("pin:")
 
+            USDT_withdraw_addresses = mixinApiNewUserInstance.createAddress(USDT_ASSET_ID, USDT_depost_address, tag_content,  asset_pin = input_pin)
+            address_id = USDT_withdraw_addresses.get("data").get("address_id")
+            print("the address :" + BTC_depost_address + " is added to your account with id:" + address_id)
 
     if ( cmd == 'removebtcaddress' ):
         remove_withdraw_address_of(mixinApiNewUserInstance, BTC_ASSET_ID, "BTC")

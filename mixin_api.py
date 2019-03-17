@@ -459,11 +459,15 @@ class MIXIN_API:
     """
     Create an address for withdrawal, you can only withdraw through an existent address.
     """
-    def createAddress(self, asset_id, public_key = "", label = "", account_name = "", account_tag = ""):
+    def createAddress(self, asset_id, public_key = "", label = "", asset_pin = "", account_name = "", account_tag = ""):
 
+        if (asset_pin == ""):
+            encrypted_pin = self.genEncrypedPin().decode()
+        else:
+            encrypted_pin = self.genEncrypedPin_withPin(asset_pin).decode()
         body = {
             "asset_id": asset_id,
-            "pin": self.genEncrypedPin().decode(),
+            "pin": encrypted_pin,
             "public_key": public_key,
             "label": label,
             "account_name": account_name,
@@ -484,9 +488,12 @@ class MIXIN_API:
     """
     Delete an address by ID.
     """
-    def delAddress(self, address_id):
+    def delAddress(self, address_id, asset_pin = ""):
 
-        encrypted_pin = self.genEncrypedPin().decode()
+        if(asset_pin == ""):
+            encrypted_pin = self.genEncrypedPin().decode()
+        else:
+            encrypted_pin = self.genEncrypedPin_withPin(asset_pin).decode()
 
         body = {"pin": encrypted_pin}
 

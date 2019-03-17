@@ -248,6 +248,12 @@ class MIXIN_API:
         return result_obj
 
 
+    def generateTokenForCreateUser(body):
+        body_in_json = json.dumps(body)
+        token = self.genPOSTJwtToken("/users", body_in_json, str(uuid.uuid4()))
+        return token.decode('utf8')
+
+
     """
     generate Mixin Network POST http request
     """
@@ -565,7 +571,7 @@ class MIXIN_API:
             "full_name": full_name
         }
 
-        return self.__genNetworkPostRequest('/users', body)
+        return self.__genNetworkPostRequest('/users', body, generateTokenForCreateUser(body))
 
 
     """

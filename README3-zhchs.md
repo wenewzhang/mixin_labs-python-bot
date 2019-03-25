@@ -1,4 +1,5 @@
-我们已经创建过一个[回复消息](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README.md)的机器人和一个能自动[支付比特币](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2.md)的机器人.
+![cover](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/Bitcoin_python.jpg)
+我们已经创建过一个[回复消息](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README-zhchs.md)的机器人和一个能自动[支付比特币](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2-zhchs.md)的机器人.
 
 # 通过本教程的学习，你可以学到如下内容
 1. 如何创建一个比特币钱包.

@@ -6,3 +6,4 @@ python-dateutil==2.7.5
 PyYAML==3.13
 requests==2.21.0
 websocket-client==0.54.0
+u-msgpack-python

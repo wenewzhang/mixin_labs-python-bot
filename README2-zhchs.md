@@ -1,3 +1,4 @@
+![cover](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/Bitcoin_python.jpg)
 
 在 [上一篇教程中](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README-zhchs.md), 我们创建了自动回复消息的机器人,当用户发送消息"Hello,World!"时，机器人会自动回复同一条消息!
 
@@ -88,10 +89,10 @@ ws open
 -------json object end---------
 ```
 开发者可以通过消息面板，给机器人转比特币，当机器人收到比特币后，马上返还给用户！
-![transfer and tokens](https://github.com/wenewzhang/mixin_network-nodejs-bot2/blob/master/transfer-any-tokens.jpg)
+![transfer and tokens](https://github.com/wenewzhang/mixin_network-nodejs-bot2/raw/master/transfer-any-tokens.jpg)
 
 事实上，用户可以发送任意的币种给机器人，它都能马上返还！
-![pay-link](https://github.com/wenewzhang/mixin_network-nodejs-bot2/blob/master/Pay_and_refund_quickly.jpg)
+![pay-link](https://github.com/wenewzhang/mixin_network-nodejs-bot2/raw/master/Pay_and_refund_quickly.jpg)
 
 ## 源代码解释
 ```python
@@ -125,6 +126,6 @@ MIXIN_WS_API.sendAppCard(ws, conversationId, mixin_config.client_id,
                         "https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128",
                         "Pay BTC 0.0001","topay")
 ```
-![APP_CARD](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app_card.jpg)
+![APP_CARD](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/app_card.jpg)
 
 [Full source code](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app.py)

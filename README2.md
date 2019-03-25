@@ -1,4 +1,5 @@
 # Python Bitcoin tutorial based on Mixin Network: Receive and send Bitcoin in Mixin Messenger
+![cover](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/Bitcoin_python.jpg)
 In [the previous chapter](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README.md), we created our first app, when user sends "Hello,world!", the bot reply the same message.
 
 
@@ -87,10 +88,10 @@ ws open
 -------json object end---------
 ```
 Developer can send Bitcoin to their bots in message panel. The bot receive the Bitcoin and then send back immediately.
-![transfer and tokens](https://github.com/wenewzhang/mixin_network-nodejs-bot2/blob/master/transfer-any-tokens.jpg)
+![transfer and tokens](https://github.com/wenewzhang/mixin_network-nodejs-bot2/raw/master/transfer-any-tokens.jpg)
 
 User can pay 0.001 Bitcoin to bot by click the button and the 0.001 Bitcoin will be refunded in 1 second,In fact, user can pay any coin either.
-![pay-link](https://github.com/wenewzhang/mixin_network-nodejs-bot2/blob/master/Pay_and_refund_quickly.jpg)
+![pay-link](https://github.com/wenewzhang/mixin_network-nodejs-bot2/raw/master/Pay_and_refund_quickly.jpg)
 
 ## Source code summary
 ```python
@@ -126,6 +127,6 @@ MIXIN_WS_API.sendAppCard(ws, conversationId, mixin_config.client_id,
                         "https://images.mixin.one/HvYGJsV5TGeZ-X9Ek3FEQohQZ3fE9LBEBGcOcn4c4BNHovP4fW4YB97Dg5LcXoQ1hUjMEgjbl1DPlKg1TW7kK6XP=s128",
                         "Pay BTC 0.0001","topay")
 ```
-![APP_CARD](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app_card.jpg)
+![APP_CARD](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/app_card.jpg)
 
 [Full source code](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/app.py)

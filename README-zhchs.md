@@ -1,4 +1,5 @@
 # 基于Mixin Network的Python比特币开发教程
+![cover](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/Bitcoin_python.jpg)
 [Mixin Network](https://mixin.one) 是一个免费的 极速的端对端加密数字货币交易系统.
 在本章中，你可以按教程在Mixin Messenger中创建一个bot来接收用户消息, 学到如何给机器人转**比特币** 或者 让机器人给你转**比特币**.
 
@@ -134,7 +135,7 @@ wget https://github.com/includeleec/mixin-python3-sdk/raw/master/mixin_config.py
 记下这些[生成的参数](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app)
 它们将用于mixin_config.py中.
 
-![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/mixin_network-keys.jpg)
+![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/raw/master/mixin_network-keys.jpg)
 在项目目录下，创建mixin_config.py,将生成的参数，替换成你的！
 
 > mixin_config.py
@@ -250,7 +251,7 @@ ws open
 
 在手机安装 [Mixin Messenger](https://mixin.one/),增加机器人为好友,(比如这个机器人是7000101639) 然后发送消息给它,效果如下!
 
-![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/helloworld.jpeg)
+![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/raw/master/helloworld.jpeg)
 
 
 ## 源代码解释

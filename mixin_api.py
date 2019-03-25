@@ -223,6 +223,26 @@ class MIXIN_API:
         result_obj = r.json()
         return result_obj
 
+    """
+    generate Mixin Network GET http request for snapshot
+    """
+    def __genNetworkGetRequest_snapshots(self, path, body=None, auth_token=""):
+        if body is not None:
+            body = urlencode(body)
+        else:
+            body = ""
+
+
+        url = self.__genUrl(path+"?" + body)
+
+        if auth_token == "":
+            token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
+            auth_token = token.decode('utf8')
+
+        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+        result_obj = r.json()
+        return result_obj
+
 
     """
     generate Mixin Network POST http request
@@ -266,7 +286,8 @@ class MIXIN_API:
     """
     def getMyAssets(self, auth_token=""):
 
-        return self.__genGetRequest('/assets', auth_token)
+        assets_result = self.__genNetworkGetRequest('/assets', auth_token)
+        return assets_result.get("data")
 
     """
     Read self profile.
@@ -565,8 +586,10 @@ class MIXIN_API:
             "asset":asset_id,
             "order":order
         }
+        finalURL = "/network/snapshots?offset=%s&asset=%s&order=%s&limit=%d" % (offset, asset_id, order, limit)
 
-        return self.__genGetRequest('/network/snapshots', body)
+
+        return self.__genGetRequest(finalURL)
 
 
     """
@@ -574,3 +597,30 @@ class MIXIN_API:
     """
     def snapshot(self, snapshot_id):
         return self.__genGetRequest('/network/snapshots/' + snapshot_id)
+    """
+    Read this account snapshots of Mixin Network. Beaer token is required
+    """
+    def account_snapshots(self, offset, asset_id, order='DESC',limit=100):
+        # TODO: SET offset default(UTC TIME)
+        body = {
+            "limit":limit,
+            "offset":offset,
+            "asset":asset_id,
+            "order":order
+        }
+
+
+        result_json = self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
+        return result_json.get('data')
+    def account_snapshots_before(self, offset, asset_id, limit=100):
+        return self.account_snapshots(offset, asset_id, order = "DESC", limit = limit)
+    def account_snapshots_after(self, offset, asset_id, limit=100):
+        return self.account_snapshots(offset, asset_id, order = "ASC", limit = limit)
+
+    def find_mysnapshot_in(self, in_snapshots):
+        mysnapshots_result = []
+        for singleSnapShot in in_snapshots:
+            if "user_id" in singleSnapShot and (singleSnapShot.get("user_id") == self.client_id):
+                mysnapshots_result.append(singleSnapShot)
+        return mysnapshots_result
+

@@ -1,4 +1,5 @@
 # Python Bitcoin tutorial based on Mixin Network: Create a Bitcoin wallet
+![cover](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/Bitcoin_python.jpg)
 We have created a bot to [echo message](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README.md) and [echo Bitcoin](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2.md).
 
 # What you will learn from this chapter

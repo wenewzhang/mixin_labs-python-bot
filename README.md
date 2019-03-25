@@ -1,5 +1,5 @@
 # Python Bitcoin tutorial based on Mixin Network
-![cover](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/Bitcoin_python.jpg)
+![cover](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/Bitcoin_python.jpg)
 A Mixin messenger bot will be created in this tutorial. The bot is powered by python, it echo message and Bitcoin from user.
 
 Full Mixin network resource [index](https://github.com/awesome-mixin-network/index_of_Mixin_Network_resource)
@@ -131,7 +131,7 @@ You need to create an app in dashboard. This [tutorial](https://mixin-network.gi
 After app is created in dashboard, you still need to [generate parameter](https://mixin-network.gitbook.io/mixin-network/mixin-messenger-app/create-bot-account#generate-secure-parameter-for-your-app)
 and write down required content, these content will be written into mixin_config.py file.
 
-![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/mixin_network-keys.jpg)
+![mixin_network-keys](https://github.com/wenewzhang/mixin_labs-php-bot/raw/master/mixin_network-keys.jpg)
 In the folder, create a file: mixin_config.py. Copy the following content into it.
 > mixin_config.py
 ```python
@@ -248,7 +248,7 @@ ws open
 
 Add the bot(for example, this bot id is 7000101639) as your friend in [Mixin Messenger](https://mixin.one/messenger) and send your messages.
 
-![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/blob/master/helloworld.jpeg)
+![mixin_messenger](https://github.com/wenewzhang/mixin_labs-php-bot/raw/master/helloworld.jpeg)
 
 ### Source code explanation
 The code creates a websocket client.

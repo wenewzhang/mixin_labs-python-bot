@@ -65,7 +65,7 @@ class MIXIN_API:
     def genGETJwtToken(self, uristring, bodystring, jti):
         jwtSig = self.genGETSig(uristring, bodystring)
         iat = datetime.datetime.utcnow()
-        exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=200)
+        exp = datetime.datetime.utcnow() + datetime.timedelta(days = 365)
         encoded = jwt.encode({'uid':self.client_id, 'sid':self.pay_session_id,'iat':iat,'exp': exp, 'jti':jti,'sig':jwtSig}, self.private_key, algorithm='RS512')
 
         return encoded

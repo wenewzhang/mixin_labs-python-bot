@@ -92,12 +92,35 @@ mixinApiBotInstance = MIXIN_API(mixin_config)
 PromptMsg  = "1: Create user and update PIN\n2: Read Bitcoin balance \n3: Read Bitcoin Address\n4: Read EOS balance\n"
 PromptMsg += "5: Read EOS address\n6: Transfer Bitcoin from bot to new account\n7: Transfer Bitcoin from new account to Master\n"
 PromptMsg += "8: Withdraw bot's Bitcoin\n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
+PromptMsg += "gensnap: Generate snapshot for one of my snapshot\n"
 PromptMsg += "q: Exit \nMake your choose:"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
     if (cmd == 'q' ):
         exit()
     print("Run...")
+    if ( cmd == 'gensnap'):
+        snapshot_id = input("snapshot id:")
+        snapshot = mixinApiBotInstance.account_snapshot_prove(snapshot_id)
+        print("snapshot information start:")
+        print(snapshot[0])
+        print("snapshot information end  :---")
+        print("\ncurl command to verify it ------")
+        print(snapshot[1])
+        print("\nend ------")
+        counter_user_id = snapshot[0]["data"]["opponent_id"]
+        result = mixinApiBotInstance.getUserInfo_prove(counter_user_id)
+
+        userInfo = result[0]
+        print("counter user id in network:" +userInfo["data"]["user_id"])
+        print("counter user id in messenger:" + userInfo["data"]["identity_number"])
+        print("counter user name in messenger:" + userInfo["data"]["full_name"])
+        print("\ncurl command to veify it: ------")
+        print(result[1])
+        print("\n end ----")
+
+
+
     if ( cmd == '1' ):
         key = RSA.generate(1024)
         pubkey = key.publickey()

@@ -133,7 +133,6 @@ class MIXIN_API:
             tssix = chr(tssix)
             tsseven = chr(tsseven)
             iterStringByTS = tszero + tsone + tstwo + tsthree + tsfour + tsfive + tssix + tsseven
-
             toEncryptContent = self_pay_pin + tsstring + iterStringByTS
         else:
             toEncryptContent = self_pay_pin + tsstring + iterString
@@ -182,7 +181,6 @@ class MIXIN_API:
             r = requests.get(url, headers={"Authorization": "Bearer " + auth_token})
 
         result_obj = r.json()
-        print(result_obj)
         return result_obj['data']
 
     """
@@ -267,9 +265,12 @@ class MIXIN_API:
         url = self.__genUrl(path)
 
         r = requests.post(url, json=body, headers=headers)
-        result_obj = r.json()
-        return result_obj
-
+        if (r.status_code == 200):
+            result_obj = r.json()
+            return result_obj
+        if (r.status_code == 500):
+            return {"httpfailed":r.status_code}
+        return (r.json())
     """
     ============
     MESSENGER PRIVATE APIs
@@ -284,13 +285,13 @@ class MIXIN_API:
     def getMyAssets(self, auth_token=""):
 
         assets_result = self.__genNetworkGetRequest('/assets', auth_token)
-        return assets_result.get("data")
+        return assets_result
 
     """
     Read self profile.
     """
     def getMyProfile(self, auth_token):
-        return self.__genGetRequest('/me', auth_token)
+        return self.__genNetworkGetRequest('/me', auth_token)
 
     """
     ?
@@ -329,13 +330,27 @@ class MIXIN_API:
     Get user's information by ID.
     """
     def getUserInfo(self, user_id, auth_token):
-        return self.__genGetRequest('/users/' + user_id, auth_token)
+        return self.__genNetworkGetRequest('/users/' + user_id, None, auth_token)
+
+    def getUserInfo_prove(self, user_id):
+        path = '/users/' + user_id
+        url = self.__genUrl(path)
+        token = self.genGETJwtToken(path, "", str(uuid.uuid4()))
+        auth_token = token.decode('utf8')
+        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+        finalCurlString = "curl -i --header " + "\"Authorization: Bearer " + auth_token + "\" --header \"Content-Type: application/json\" --header \"Content-length: 0\" "
+        finalCurlString += " \""
+        finalCurlString += url
+        finalCurlString += "\""
+        result_obj = r.json()
+        return (result_obj, finalCurlString)
+
 
     """
     Search user by Mixin ID or Phone Number.
     """
-    def SearchUser(self, q, auth_token=""):
-        return self.__genGetRequest('/search/' + q, auth_token)
+    def SearchUser(self, q):
+        return self.__genNetworkGetRequest('/search/' + q)
 
     """
     Rotate user’s code_id.
@@ -441,6 +456,9 @@ class MIXIN_API:
             "trace_id": trace_id,
             "memo": memo
         }
+        if trace_id == "":
+            body['trace_id'] = str(uuid.uuid1())
+
 
         return self.__genNetworkPostRequest('/withdrawals', body)
 
@@ -498,20 +516,41 @@ class MIXIN_API:
     """
     Transfer of assets between Mixin Network users.
     """
-    def transferTo(self, to_user_id, to_asset_id, to_asset_amount, memo, trace_uuid="", input_pin = ""):
+    def transferTo(self, to_user_id, to_asset_id, to_asset_amount, memo, trace_uuid="", input_pin = "", input_encrypted_pin = ""):
 
-        # generate encrypted pin
-        if (input_pin == ""):
-            encrypted_pin = self.genEncrypedPin()
+        if input_encrypted_pin == "":
+            # generate encrypted pin
+            if (input_pin == ""):
+                encrypted_pin = self.genEncrypedPin()
+            else:
+                encrypted_pin = self.genEncrypedPin_withPin(input_pin)
+
         else:
-            encrypted_pin = self.genEncrypedPin_withPin(input_pin)
-
-        body = {'asset_id': to_asset_id, 'counter_user_id': to_user_id, 'amount': str(to_asset_amount),
+            encrypted_pin = input_encrypted_pin
+        body = {'asset_id': to_asset_id, 'opponent_id': to_user_id, 'amount': str(to_asset_amount),
                 'pin': encrypted_pin.decode('utf8'), 'trace_id': trace_uuid, 'memo': memo}
         if trace_uuid == "":
             body['trace_id'] = str(uuid.uuid1())
 
         return self.__genNetworkPostRequest('/transfers', body)
+
+    def transferTo_MainNet(self, to_account_key, to_asset_id, to_asset_amount, memo, trace_uuid="", input_pin = "", input_encrypted_pin = ""):
+
+        if input_encrypted_pin == "":
+            # generate encrypted pin
+            if (input_pin == ""):
+                encrypted_pin = self.genEncrypedPin()
+            else:
+                encrypted_pin = self.genEncrypedPin_withPin(input_pin)
+
+        else:
+            encrypted_pin = input_encrypted_pin
+        body = {'asset_id': to_asset_id, 'opponent_key': to_account_key, 'amount': str(to_asset_amount),
+                'pin': encrypted_pin.decode('utf8'), 'trace_id': trace_uuid, 'memo': memo}
+        if trace_uuid == "":
+            body['trace_id'] = str(uuid.uuid1())
+
+        return self.__genNetworkPostRequest('/transactions', body)
 
     """
     Read transfer by trace ID.
@@ -605,7 +644,11 @@ class MIXIN_API:
         finalURL = "/network/snapshots?offset=%s&asset=%s&order=%s&limit=%d" % (offset, asset_id, order, limit)
 
 
-        return self.__genGetRequest(finalURL)
+        return self.__genNetworkGetRequest_snapshots(finalURL)
+    def snapshots_after(self, offset, asset_id, limit=100):
+        return self.snapshots(offset, asset_id, "ASC", limit)
+    def snapshots_before(self, offset, asset_id, limit=100):
+        return self.snapshots(offset, asset_id, "DESC", limit)
 
 
     """
@@ -618,6 +661,21 @@ class MIXIN_API:
 
     def account_snapshot(self, snapshot_id):
         return self.__genNetworkGetRequest_snapshots('/network/snapshots/' + snapshot_id)
+    def account_snapshot_prove(self, snapshot_id):
+        path = '/network/snapshots/' + snapshot_id
+        url = self.__genUrl(path)
+        token = self.genGETJwtToken(path, "", str(uuid.uuid4()))
+        auth_token = token.decode('utf8')
+        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+        finalCurlString = "curl -i --header " + "\"Authorization: Bearer " + auth_token + "\" --header \"Content-Type: application/json\" --header \"Content-length: 0\" "
+        finalCurlString += " \""
+        finalCurlString += url
+        finalCurlString += "\""
+        result_obj = r.json()
+        return (result_obj, finalCurlString)
+
+
+
     """
     Read this account snapshots of Mixin Network. Beaer token is required
     """
@@ -632,16 +690,10 @@ class MIXIN_API:
 
 
         result_json = self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
-        return result_json.get('data')
+        return result_json
     def account_snapshots_before(self, offset, asset_id, limit=100):
         return self.account_snapshots(offset, asset_id, order = "DESC", limit = limit)
     def account_snapshots_after(self, offset, asset_id, limit=100):
         return self.account_snapshots(offset, asset_id, order = "ASC", limit = limit)
 
-    def find_mysnapshot_in(self, in_snapshots):
-        mysnapshots_result = []
-        for singleSnapShot in in_snapshots:
-            if "user_id" in singleSnapShot and (singleSnapShot.get("user_id") == self.client_id):
-                mysnapshots_result.append(singleSnapShot)
-        return mysnapshots_result
 

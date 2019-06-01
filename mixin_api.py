@@ -65,7 +65,7 @@ class MIXIN_API:
     def genGETJwtToken(self, uristring, bodystring, jti):
         jwtSig = self.genGETSig(uristring, bodystring)
         iat = datetime.datetime.utcnow()
-        exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=200)
+        exp = datetime.datetime.utcnow() + datetime.timedelta(days = 365)
         encoded = jwt.encode({'uid':self.client_id, 'sid':self.pay_session_id,'iat':iat,'exp': exp, 'jti':jti,'sig':jwtSig}, self.private_key, algorithm='RS512')
 
         return encoded
@@ -81,14 +81,13 @@ class MIXIN_API:
         return signature
 
 
-    def genPOSTJwtToken(self, uristring, bodystring, jti):
+    def genPOSTJwtToken(self, uristring, bodystring, jti, expseconds = 200):
         jwtSig = self.genPOSTSig(uristring, bodystring)
         iat = datetime.datetime.utcnow()
-        exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=200)
+        exp = datetime.datetime.utcnow() + datetime.timedelta(seconds=expseconds)
         encoded = jwt.encode({'uid':self.client_id, 'sid':self.pay_session_id,'iat':iat,'exp': exp, 'jti':jti,'sig':jwtSig}, self.private_key, algorithm='RS512')
         return encoded
-
-    def genEncrypedPin(self, iterString = None):
+    def genEncrypedPin_withPin(self, self_pay_pin, iterString = None):
         if self.keyForAES == "":
             privKeyObj = RSA.importKey(self.private_key)
 
@@ -134,10 +133,9 @@ class MIXIN_API:
             tssix = chr(tssix)
             tsseven = chr(tsseven)
             iterStringByTS = tszero + tsone + tstwo + tsthree + tsfour + tsfive + tssix + tsseven
-
-            toEncryptContent = self.pay_pin + tsstring + iterStringByTS
+            toEncryptContent = self_pay_pin + tsstring + iterStringByTS
         else:
-            toEncryptContent = self.pay_pin + tsstring + iterString
+            toEncryptContent = self_pay_pin + tsstring + iterString
 
         lenOfToEncryptContent = len(toEncryptContent)
         toPadCount = 16 - lenOfToEncryptContent % 16
@@ -157,6 +155,9 @@ class MIXIN_API:
 
         return encrypted_pin
 
+
+    def genEncrypedPin(self, iterString = None):
+        return self.genEncrypedPin_withPin(self.pay_pin)
     """
     COMMON METHON
     """
@@ -180,7 +181,6 @@ class MIXIN_API:
             r = requests.get(url, headers={"Authorization": "Bearer " + auth_token})
 
         result_obj = r.json()
-        print(result_obj)
         return result_obj['data']
 
     """
@@ -229,19 +229,22 @@ class MIXIN_API:
     def __genNetworkGetRequest_snapshots(self, path, body=None, auth_token=""):
         if body is not None:
             body = urlencode(body)
+            url = self.__genUrl(path+"?" + body)
+            if auth_token == "":
+                token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
+                auth_token = token.decode('utf8')
+
+
         else:
             body = ""
-
-
-        url = self.__genUrl(path+"?" + body)
-
-        if auth_token == "":
-            token = self.genGETJwtToken(path+"?" + body, "", str(uuid.uuid4()))
-            auth_token = token.decode('utf8')
-
+            url = self.__genUrl(path)
+            if auth_token == "":
+                token = self.genGETJwtToken(path, "", str(uuid.uuid4()))
+                auth_token = token.decode('utf8')
         r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
         result_obj = r.json()
         return result_obj
+
 
 
     """
@@ -250,10 +253,8 @@ class MIXIN_API:
     # TODO: request
     def __genNetworkPostRequest(self, path, body, auth_token=""):
 
-        # transfer obj => json string
         body_in_json = json.dumps(body)
 
-        # generate robot's auth token
         if auth_token == "":
             token = self.genPOSTJwtToken(path, body_in_json, str(uuid.uuid4()))
             auth_token = token.decode('utf8')
@@ -261,18 +262,15 @@ class MIXIN_API:
             'Content-Type'  : 'application/json',
             'Authorization' : 'Bearer ' + auth_token,
         }
-        # generate url
         url = self.__genUrl(path)
 
         r = requests.post(url, json=body, headers=headers)
-# {'error': {'status': 202, 'code': 20118, 'description': 'Invalid PIN format.'}}
-
-        # r = requests.post(url, data=body, headers=headers)
-# {'error': {'status': 202, 'code': 401, 'description': 'Unauthorized, maybe invalid token.'}}
-        result_obj = r.json()
-        print(result_obj)
-        return result_obj
-
+        if (r.status_code == 200):
+            result_obj = r.json()
+            return result_obj
+        if (r.status_code == 500):
+            return {"httpfailed":r.status_code}
+        return (r.json())
     """
     ============
     MESSENGER PRIVATE APIs
@@ -287,13 +285,13 @@ class MIXIN_API:
     def getMyAssets(self, auth_token=""):
 
         assets_result = self.__genNetworkGetRequest('/assets', auth_token)
-        return assets_result.get("data")
+        return assets_result
 
     """
     Read self profile.
     """
     def getMyProfile(self, auth_token):
-        return self.__genGetRequest('/me', auth_token)
+        return self.__genNetworkGetRequest('/me', auth_token)
 
     """
     ?
@@ -332,13 +330,27 @@ class MIXIN_API:
     Get user's information by ID.
     """
     def getUserInfo(self, user_id, auth_token):
-        return self.__genGetRequest('/users/' + user_id, auth_token)
+        return self.__genNetworkGetRequest('/users/' + user_id, None, auth_token)
+
+    def getUserInfo_prove(self, user_id):
+        path = '/users/' + user_id
+        url = self.__genUrl(path)
+        token = self.genGETJwtToken(path, "", str(uuid.uuid4()))
+        auth_token = token.decode('utf8')
+        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+        finalCurlString = "curl -i --header " + "\"Authorization: Bearer " + auth_token + "\" --header \"Content-Type: application/json\" --header \"Content-length: 0\" "
+        finalCurlString += " \""
+        finalCurlString += url
+        finalCurlString += "\""
+        result_obj = r.json()
+        return (result_obj, finalCurlString)
+
 
     """
     Search user by Mixin ID or Phone Number.
     """
-    def SearchUser(self, q, auth_token=""):
-        return self.__genGetRequest('/search/' + q, auth_token)
+    def SearchUser(self, q):
+        return self.__genNetworkGetRequest('/search/' + q)
 
     """
     Rotate user’s code_id.
@@ -388,23 +400,20 @@ class MIXIN_API:
     if auth_token is set, it create messenger user pin.
     """
     def updatePin(self, new_pin, old_pin, auth_token=""):
-        old_inside_pay_pin = self.pay_pin
-        self.pay_pin = new_pin
-        newEncrypedPin = self.genEncrypedPin()
         if old_pin == "":
+            newEncrypedPin = self.genEncrypedPin_withPin(new_pin)
             body = {
                 "old_pin": "",
                 "pin": newEncrypedPin.decode()
             }
         else:
+            oldEncryptedPin = self.genEncrypedPin_withPin(old_pin)
+            newEncrypedPin = self.genEncrypedPin_withPin(new_pin)
 
-            self.pay_pin = old_pin
-            oldEncryptedPin = self.genEncrypedPin()
             body = {
                 "old_pin": oldEncryptedPin.decode(),
                 "pin": newEncrypedPin.decode()
             }
-        self.pay_pin = old_inside_pay_pin
         return self.__genNetworkPostRequest('/pin/update', body, auth_token)
 
     """
@@ -412,8 +421,8 @@ class MIXIN_API:
     if auth_token is empty, it verify robot' pin.
     if auth_token is set, it verify messenger user pin.
     """
-    def verifyPin(self, auth_token=""):
-        enPin = self.genEncrypedPin()
+    def verifyPin(self, input_pin, auth_token=""):
+        enPin = self.genEncrypedPin_withPin(input_pin)
         body = {
             "pin": enPin.decode()
         }
@@ -425,17 +434,20 @@ class MIXIN_API:
     """
     def deposit(self, asset_id):
         return self.__genNetworkGetRequest(' /assets/' + asset_id)
+    """
+    Read an asset's withdraw address, usually it is public_key, but account_name and account_tag is used for EOS.
+    """
+    def withdrawals_address(self, asset_id):
+        return self.__genNetworkGetRequest('/assets/' + asset_id + '/addresses')
+
 
 
     """
     withdrawals robot asset to address_id
     Tips:Get assets out of Mixin Network, neet to create an address for withdrawal.
     """
-    def withdrawals(self, address_id, amount, memo, trace_id=""):
-        encrypted_pin = self.genEncrypedPin()
-
-        if trace_id == "":
-            trace_id = str(uuid.uuid1())
+    def withdrawals(self, address_id, amount, memo, trace_id, asset_pin):
+        encrypted_pin = self.genEncrypedPin_withPin(asset_pin).decode()
 
         body = {
             "address_id": address_id,
@@ -443,20 +455,26 @@ class MIXIN_API:
             "amount": amount,
             "trace_id": trace_id,
             "memo": memo
-
         }
+        if trace_id == "":
+            body['trace_id'] = str(uuid.uuid1())
 
-        return self.__genNetworkPostRequest('/withdrawals/', body)
+
+        return self.__genNetworkPostRequest('/withdrawals', body)
 
 
     """
     Create an address for withdrawal, you can only withdraw through an existent address.
     """
-    def createAddress(self, asset_id, public_key = "", label = "", account_name = "", account_tag = ""):
+    def createAddress(self, asset_id, public_key = "", label = "", asset_pin = "", account_name = "", account_tag = ""):
 
+        if (asset_pin == ""):
+            encrypted_pin = self.genEncrypedPin().decode()
+        else:
+            encrypted_pin = self.genEncrypedPin_withPin(asset_pin).decode()
         body = {
             "asset_id": asset_id,
-            "pin": self.genEncrypedPin().decode(),
+            "pin": encrypted_pin,
             "public_key": public_key,
             "label": label,
             "account_name": account_name,
@@ -477,9 +495,12 @@ class MIXIN_API:
     """
     Delete an address by ID.
     """
-    def delAddress(self, address_id):
+    def delAddress(self, address_id, asset_pin = ""):
 
-        encrypted_pin = self.genEncrypedPin().decode()
+        if(asset_pin == ""):
+            encrypted_pin = self.genEncrypedPin().decode()
+        else:
+            encrypted_pin = self.genEncrypedPin_withPin(asset_pin).decode()
 
         body = {"pin": encrypted_pin}
 
@@ -495,17 +516,41 @@ class MIXIN_API:
     """
     Transfer of assets between Mixin Network users.
     """
-    def transferTo(self, to_user_id, to_asset_id, to_asset_amount, memo, trace_uuid=""):
+    def transferTo(self, to_user_id, to_asset_id, to_asset_amount, memo, trace_uuid="", input_pin = "", input_encrypted_pin = ""):
 
-        # generate encrypted pin
-        encrypted_pin = self.genEncrypedPin()
+        if input_encrypted_pin == "":
+            # generate encrypted pin
+            if (input_pin == ""):
+                encrypted_pin = self.genEncrypedPin()
+            else:
+                encrypted_pin = self.genEncrypedPin_withPin(input_pin)
 
-        body = {'asset_id': to_asset_id, 'counter_user_id': to_user_id, 'amount': str(to_asset_amount),
+        else:
+            encrypted_pin = input_encrypted_pin
+        body = {'asset_id': to_asset_id, 'opponent_id': to_user_id, 'amount': str(to_asset_amount),
                 'pin': encrypted_pin.decode('utf8'), 'trace_id': trace_uuid, 'memo': memo}
         if trace_uuid == "":
             body['trace_id'] = str(uuid.uuid1())
 
         return self.__genNetworkPostRequest('/transfers', body)
+
+    def transferTo_MainNet(self, to_account_key, to_asset_id, to_asset_amount, memo, trace_uuid="", input_pin = "", input_encrypted_pin = ""):
+
+        if input_encrypted_pin == "":
+            # generate encrypted pin
+            if (input_pin == ""):
+                encrypted_pin = self.genEncrypedPin()
+            else:
+                encrypted_pin = self.genEncrypedPin_withPin(input_pin)
+
+        else:
+            encrypted_pin = input_encrypted_pin
+        body = {'asset_id': to_asset_id, 'opponent_key': to_account_key, 'amount': str(to_asset_amount),
+                'pin': encrypted_pin.decode('utf8'), 'trace_id': trace_uuid, 'memo': memo}
+        if trace_uuid == "":
+            body['trace_id'] = str(uuid.uuid1())
+
+        return self.__genNetworkPostRequest('/transactions', body)
 
     """
     Read transfer by trace ID.
@@ -548,19 +593,29 @@ class MIXIN_API:
         }
 
         return self.__genNetworkGetRequest('/external/transactions', body)
+    def fetchTokenForCreateUser(self, body, url):
+        body_in_json = json.dumps(body)
+        headers = {
+            'Content-Type'  : 'application/json',
+        }
+        r = requests.post(url, json=body, headers=headers)
+        result_obj = r.json()
+        print(result_obj)
+        return result_obj.get("token")
+
 
 
     """
     Create a new Mixin Network user (like a normal Mixin Messenger user). You should keep PrivateKey which is used to sign an AuthenticationToken and encrypted PIN for the user.
     """
-    def createUser(self, session_secret, full_name):
+    def createUser(self, session_secret, full_name, auth_token = ""):
 
         body = {
             "session_secret": session_secret,
             "full_name": full_name
         }
 
-        return self.__genNetworkPostRequest('/users', body)
+        return self.__genNetworkPostRequest('/users', body, auth_token)
 
 
     """
@@ -589,7 +644,11 @@ class MIXIN_API:
         finalURL = "/network/snapshots?offset=%s&asset=%s&order=%s&limit=%d" % (offset, asset_id, order, limit)
 
 
-        return self.__genGetRequest(finalURL)
+        return self.__genNetworkGetRequest_snapshots(finalURL)
+    def snapshots_after(self, offset, asset_id, limit=100):
+        return self.snapshots(offset, asset_id, "ASC", limit)
+    def snapshots_before(self, offset, asset_id, limit=100):
+        return self.snapshots(offset, asset_id, "DESC", limit)
 
 
     """
@@ -597,6 +656,26 @@ class MIXIN_API:
     """
     def snapshot(self, snapshot_id):
         return self.__genGetRequest('/network/snapshots/' + snapshot_id)
+    """
+    """
+
+    def account_snapshot(self, snapshot_id):
+        return self.__genNetworkGetRequest_snapshots('/network/snapshots/' + snapshot_id)
+    def account_snapshot_prove(self, snapshot_id):
+        path = '/network/snapshots/' + snapshot_id
+        url = self.__genUrl(path)
+        token = self.genGETJwtToken(path, "", str(uuid.uuid4()))
+        auth_token = token.decode('utf8')
+        r = requests.get(url, headers={"Authorization": "Bearer " + auth_token, 'Content-Type': 'application/json', 'Content-length': '0'})
+        finalCurlString = "curl -i --header " + "\"Authorization: Bearer " + auth_token + "\" --header \"Content-Type: application/json\" --header \"Content-length: 0\" "
+        finalCurlString += " \""
+        finalCurlString += url
+        finalCurlString += "\""
+        result_obj = r.json()
+        return (result_obj, finalCurlString)
+
+
+
     """
     Read this account snapshots of Mixin Network. Beaer token is required
     """
@@ -611,16 +690,10 @@ class MIXIN_API:
 
 
         result_json = self.__genNetworkGetRequest_snapshots("/network/snapshots", body)
-        return result_json.get('data')
+        return result_json
     def account_snapshots_before(self, offset, asset_id, limit=100):
         return self.account_snapshots(offset, asset_id, order = "DESC", limit = limit)
     def account_snapshots_after(self, offset, asset_id, limit=100):
         return self.account_snapshots(offset, asset_id, order = "ASC", limit = limit)
 
-    def find_mysnapshot_in(self, in_snapshots):
-        mysnapshots_result = []
-        for singleSnapShot in in_snapshots:
-            if "user_id" in singleSnapShot and (singleSnapShot.get("user_id") == self.client_id):
-                mysnapshots_result.append(singleSnapShot)
-        return mysnapshots_result
 

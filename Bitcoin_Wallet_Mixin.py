@@ -95,20 +95,109 @@ def readAssetAddress(asset_id,isBTC = True):
 def gen_memo_ExinBuy(asset_id_string):
     return base64.b64encode(umsgpack.packb({"A": uuid.UUID("{" + asset_id_string + "}").bytes})).decode("utf-8")
 
+def asset_balance(mixinApiInstance, asset_id):
+    asset_result = mixinApiInstance.getAsset(asset_id)
+    assetInfo = asset_result.get("data")
+    return assetInfo.get("balance")
+
+
+def btc_balance_of(mixinApiInstance):
+    return asset_balance(BTC_ASSET_ID)
+def usdt_balance_of(mixinApiInstance):
+    return asset_balance(USDT_ASSET_ID)
+
+def strPresent_of_asset_withdrawaddress(thisAddress, asset_id):
+    address_id = thisAddress.get("address_id")
+    address_pubkey = thisAddress.get("public_key")
+    address_label = thisAddress.get("label")
+    address_accountname = thisAddress.get("account_name")
+    address_accounttag = thisAddress.get("account_tag")
+    address_fee = thisAddress.get("fee")
+    address_dust = thisAddress.get("dust")
+    Address = "tag: %s,  id: %s, address: %s, fee: %s, dust: %s"%(address_label, address_id, address_pubkey, address_fee, address_dust)
+    return Address
+ 
+def strPresent_of_btc_withdrawaddress(thisAddress):
+    return strPresent_of_asset_withdrawaddress(thisAddress, BTC_ASSET_ID)
+    
+def strPresent_of_usdt_withdrawaddress(thisAddress):
+    return strPresent_of_asset_withdrawaddress(thisAddress, USDT_ASSET_ID)
+
+def remove_withdraw_address_of(mixinApiUserInstance, withdraw_asset_id, withdraw_asset_name):
+    USDT_withdraw_addresses_result = mixinApiUserInstance.withdrawals_address(withdraw_asset_id)
+    USDT_withdraw_addresses = USDT_withdraw_addresses_result.get("data")
+    i = 0
+    print("%s withdraw address is:======="%withdraw_asset_name)
+    for eachAddress in USDT_withdraw_addresses:
+        usdtAddress = strPresent_of_usdt_withdrawaddress(eachAddress)
+        print("index %d, %s"%(i, usdtAddress))
+        i = i + 1
+
+    userselect = input("which address index you want to remove")
+    if (int(userselect) < i):
+        eachAddress = USDT_withdraw_addresses[int(userselect)]
+        address_id = eachAddress.get("address_id")
+        Address = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
+        confirm = input("Type YES to remove " + Address + "!!:")
+        if (confirm == "YES"):
+            input_pin = input("pin:")
+            mixinApiUserInstance.delAddress(address_id, input_pin)
+ 
+def withdraw_asset(withdraw_asset_id, withdraw_asset_name):
+    this_asset_balance = asset_balance(mixinApiNewUserInstance, withdraw_asset_id)
+    withdraw_amount = input("%s %s in your account, how many %s you want to withdraw: "%(withdraw_asset_name, this_asset_balance, withdraw_asset_name))
+    withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(withdraw_asset_id)
+    withdraw_addresses = withdraw_addresses_result.get("data")
+    i = 0
+    print("current " + withdraw_asset_name +" address:=======")
+    for eachAddress in withdraw_addresses:
+        Address = "index %d: %s"%(i, strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
+        print(Address)
+        i = i + 1
+
+    userselect = input("which address index is your destination")
+    if (int(userselect) < i):
+        eachAddress = withdraw_addresses[int(userselect)]
+        address_id = eachAddress.get("address_id")
+        address_pubkey = eachAddress.get("public_key")
+        address_selected = "index %d: %s"%(int(userselect), strPresent_of_asset_withdrawaddress(eachAddress, withdraw_asset_id))
+        confirm = input("Type YES to withdraw " + withdraw_amount + withdraw_asset_name + " to " + address_selected + "!!:")
+        if (confirm == "YES"):
+            this_uuid = str(uuid.uuid1())
+            asset_pin = input("pin:")
+            asset_withdraw_result = mixinApiNewUserInstance.withdrawals(address_id, withdraw_amount, "withdraw2"+address_pubkey, this_uuid, asset_pin)
+            return asset_withdraw_result
+    return None
+
+
 
 mixinApiBotInstance = MIXIN_API(mixin_config)
 
-PromptMsg = "0: Read first user from local file new_users.csv\n"
-PromptMsg += "1: Create user and update PIN\n2: Read account balance \n3: Read Bitcoin Address\n4: Read USDT balance\n"
-PromptMsg += "5: Read USDT address\n6: Pay USDT to ExinCore to buy BTC\n7: Read transaction of my account\n"
-PromptMsg += "8: transafer all asset to master of Mixin Messenger \n9: Withdraw bot's EOS\na: Verify Pin\nd: Create Address and Delete it\nr: Create Address and read it\n"
-PromptMsg += "q: Exit \nMake your choose:"
+PromptMsg  = "Read first user from local file new_users.csv        : loaduser\n"
+PromptMsg += "Read account asset balance                           : balance\n"
+PromptMsg += "Read Bitcoin                                         : btcbalance\n"
+PromptMsg += "Read USDT                                            : usdtbalance\n"
+PromptMsg += "Read transaction of my account                       : searchsnapshots\n"
+PromptMsg += "Read one snapshots info of account                   : snapshot\n"
+PromptMsg += "Pay USDT to ExinCore to buy BTC                      : buybtc\n"
+PromptMsg += "Create wallet and update PIN                         : create\n"
+PromptMsg += "transafer all asset to my account in Mixin Messenger : allmoney\n"
+PromptMsg += "List account withdraw address                        : listaddress\n"
+PromptMsg += "Add new withdraw address for Bitcoin                 : addbitcoinaddress\n"
+PromptMsg += "Add new withdraw address for USDT                    : addusdtaddress\n"
+PromptMsg += "Remove withdraw address for Bitcoin                  : removebtcaddress\n"
+PromptMsg += "Remove withdraw address for Bitcoin                  : removeusdtaddress\n"
+PromptMsg += "Withdraw BTC                                         : withdrawbtc\n"
+PromptMsg += "Withdraw USDT                                        : withdrawusdt\n"
+PromptMsg += "verify pin                                           : verifypin\n"
+PromptMsg += "updatepin                                            : updatepin\n"
+PromptMsg += "Exit                                                 : q\n"
 while ( 1 > 0 ):
     cmd = input(PromptMsg)
     if (cmd == 'q' ):
         exit()
     print("Run...")
-    if ( cmd == '0'):
+    if ( cmd == 'loaduser'):
         with open('new_users.csv', newline='') as csvfile:
             reader  = csv.reader(csvfile)
             row = next(reader)
@@ -123,36 +212,7 @@ while ( 1 > 0 ):
                                                             userid,
                                                             pin,"")
             print("read user id:" + userid)
-    if ( cmd == '1' ):
-        key = RSA.generate(1024)
-        pubkey = key.publickey()
-        print(key.exportKey())
-        print(pubkey.exportKey())
-        private_key = key.exportKey()
-        session_key = pubkeyContent(pubkey.exportKey())
-        # print(session_key)
-        print(session_key.decode())
-        userInfo = mixinApiBotInstance.createUser(session_key.decode(),"Tom Bot")
-        print(userInfo.get("data").get("user_id"))
-        with open('new_users.csv', 'a', newline='') as csvfile:
-            csvwriter = csv.writer(csvfile)
-            csvwriter.writerow([private_key.decode(),
-                                userInfo.get("data").get("pin_token"),
-                                userInfo.get("data").get("session_id"),
-                                userInfo.get("data").get("user_id"),
-                                PIN])
-        mixinApiNewUserInstance = generateMixinAPI(private_key.decode(),
-                                                    userInfo.get("data").get("pin_token"),
-                                                    userInfo.get("data").get("session_id"),
-                                                    userInfo.get("data").get("user_id"),
-                                                    PIN,"")
-        pinInfo = mixinApiNewUserInstance.updatePin(PIN,"")
-        print(pinInfo)
-        time.sleep(3)
-        # mixinApiNewUserInstance.pay_pin = PIN
-        pinInfo2 = mixinApiNewUserInstance.verifyPin()
-        print(pinInfo2)
-    if ( cmd == '2' ):
+    if ( cmd == 'balance' ):
         AssetsInfo = mixinApiNewUserInstance.getMyAssets()
         print("Your asset balance is\n===========")
         for eachAssest in AssetsInfo:
@@ -166,43 +226,25 @@ while ( 1 > 0 ):
                 continue
             if (float(eachAssetInfo.get("balance")) > 0):
                 availableAssset.append(eachAssetInfo)
-    if ( cmd == '3' ):
-        print("Read Bitcoin(uuid:%s) address" %(BTC_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
-        print(btcInfo)
+    if ( cmd == 'btcbalance' ):
+        asset_result = mixinApiNewUserInstance.getAsset(BTC_ASSET_ID)
+        btcInfo = asset_result.get("data")
+        print("%s: %s, depositAddress: %s" %(btcInfo.get("name"), btcInfo.get("balance"), btcInfo.get("public_key")))
 
-    if ( cmd == '4' ):
-        print("Read USDT (uuid:%s) balance" %(USDT_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
-        print("Account %s \'s balance is %s  " %(mixinApiNewUserInstance.client_id ,btcInfo.get("data").get("balance")))
-        print('https://mixin.one/pay?recipient='+mixinApiNewUserInstance.client_id+'&asset='+USDT_ASSET_ID+'&amount=0.5&trace=' + str(uuid.uuid1()) + '&memo=depositUSDT')
-
-    if ( cmd == '5' ):
-        print("Read USDT (uuid:%s) address" %(USDT_ASSET_ID))
-        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
-        print(btcInfo)
-
-    if ( cmd == '6' ):
-        # Pack memo
-        memo_for_exin = gen_memo_ExinBuy(BTC_ASSET_ID)
-        print("packed memo is")
-        print(memo_for_exin)
-        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
-        remainUSDT = btcInfo.get("data").get("balance")
-        print("You have : " + remainUSDT + " USDT")
-        this_uuid = str(uuid.uuid1())
-        print("uuid is: " + this_uuid)
-        confirm_payUSDT = input("Input Yes to pay " + remainUSDT + " to ExinCore to buy Bitcoin")
-        if ( confirm_payUSDT == "Yes" ):
-            transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid)
-            snapShotID = transfer_result.get("data").get("snapshot_id")
-            print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
-    if ( cmd == '7' ):
+    if ( cmd == 'usdtbalance' ):
+        asset_result = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
+        usdtInfo = asset_result.get("data")
+        print("%s: %s, depositAddress: %s" %(usdtInfo.get("name"), usdtInfo.get("balance"), usdtInfo.get("public_key")))
+    if ( cmd == 'snapshot'):
+        input_snapshotid = input('input snapshots id')
+        print(mixinApiNewUserInstance.account_snapshot(input_snapshotid))
+    if ( cmd == 'searchsnapshots'):
         timestamp = input("input timestamp, history after the time will be searched:")
         limit = input("input max record you want to search:")
         snapshots_result_of_account = mixinApiNewUserInstance.account_snapshots_after(timestamp, asset_id = "", limit=limit)
         USDT_Snapshots_result_of_account = mixinApiNewUserInstance.find_mysnapshot_in(snapshots_result_of_account)
         for singleSnapShot in USDT_Snapshots_result_of_account:
+            print(singleSnapShot)
             amount_snap = singleSnapShot.get("amount")
             asset_snap = singleSnapShot.get("asset").get("name")
             created_at_snap = singleSnapShot.get("created_at")
@@ -258,10 +300,64 @@ while ( 1 > 0 ):
                         print(headString)
                 except :
                     print(created_at_snap +": You receive: " + str(amount_snap) + " " + asset_snap + " from " + opponent_id_snapshot + " with memo:" + memo_at_snap)
+
+    if ( cmd == 'buybtc' ):
+        # Pack memo
+        memo_for_exin = gen_memo_ExinBuy(BTC_ASSET_ID)
+
+        btcInfo = mixinApiNewUserInstance.getAsset(USDT_ASSET_ID)
+        remainUSDT = btcInfo.get("data").get("balance")
+        print("You have : " + remainUSDT + " USDT")
+        this_uuid = str(uuid.uuid1())
+        print("uuid is: " + this_uuid)
+        confirm_payUSDT = input("Input Yes to pay " + remainUSDT + " to ExinCore to buy Bitcoin")
+        if ( confirm_payUSDT == "Yes" ):
+            input_pin = input("pin code:")
+            transfer_result = mixinApiNewUserInstance.transferTo(EXINCORE_UUID, USDT_ASSET_ID, remainUSDT, memo_for_exin, this_uuid, input_pin)
+            snapShotID = transfer_result.get("data").get("snapshot_id")
+            print("Pay USDT to ExinCore to buy BTC by uuid:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
+    if ( cmd == 'create' ):
+        key = RSA.generate(1024)
+        pubkey = key.publickey()
+        print(key.exportKey())
+        print(pubkey.exportKey())
+        private_key = key.exportKey()
+        session_key = pubkeyContent(pubkey.exportKey())
+        # print(session_key)
+        input_session = session_key.decode()
+        account_name  = "Tom Bot"
+        print(session_key.decode())
+        body = {
+            "session_secret": input_session,
+            "full_name": account_name
+        }
+        token_from_freeweb = mixinApiBotInstance.fetchTokenForCreateUser(body,  "http://freemixinapptoken.myrual.me/token")
+        userInfo = mixinApiBotInstance.createUser(input_session, account_name, token_from_freeweb)
+        print(userInfo.get("data").get("user_id"))
+        with open('new_users.csv', 'a', newline='') as csvfile:
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow([private_key.decode(),
+                                userInfo.get("data").get("pin_token"),
+                                userInfo.get("data").get("session_id"),
+                                userInfo.get("data").get("user_id"),
+                                ""])
+        mixinApiNewUserInstance = generateMixinAPI(private_key.decode(),
+                                                    userInfo.get("data").get("pin_token"),
+                                                    userInfo.get("data").get("session_id"),
+                                                    userInfo.get("data").get("user_id"),
+                                                    "","")
+        defauled_pin = input("input pin:")
+        pinInfo = mixinApiNewUserInstance.updatePin(defauled_pin,"")
+        print(pinInfo)
+        time.sleep(3)
+        pinInfo2 = mixinApiNewUserInstance.verifyPin(defauled_pin)
+        print(pinInfo2)
+
 # c6d0c728-2624-429b-8e0d-d9d19b6592fa
-    if ( cmd == '8' ):
+    if ( cmd == 'allmoney' ):
         AssetsInfo = mixinApiNewUserInstance.getMyAssets()
         availableAssset = []
+        my_pin = input("pin:")
         for eachAssetInfo in AssetsInfo: 
             if (eachAssetInfo.get("balance") == "0"):
                 continue
@@ -270,83 +366,68 @@ while ( 1 > 0 ):
                 print("You have : " + eachAssetInfo.get("balance") + eachAssetInfo.get("name"))
                 this_uuid = str(uuid.uuid1())
                 print("uuid is: " + this_uuid)
-                confirm_pay= input("type YES to pay " + eachAssetInfo.get("balance")+ " to MASTER ")
+                confirm_pay= input("type YES to pay " + eachAssetInfo.get("balance")+ " to MASTER:")
                 if ( confirm_pay== "YES" ):
-                    transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, eachAssetInfo.get("asset_id"), eachAssetInfo.get("balance"), "", this_uuid)
+                    transfer_result = mixinApiNewUserInstance.transferTo(MASTER_UUID, eachAssetInfo.get("asset_id"), eachAssetInfo.get("balance"), "", this_uuid, my_pin)
                     snapShotID = transfer_result.get("data").get("snapshot_id")
-                    print("Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
-    if ( cmd == '9' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                eosInfo = mixinApiBotInstance.createAddressEOS(EOS_ASSET_ID,"eoswithmixin","d80363afcc466fbaf2daa7328ae2adfa")
-                # mixinApiBotInstance.withdrawals(btcInfo.get("data").get("address_id"),AMOUNT,"")
-                print(eosInfo)
-    if ( cmd == 'a' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiNewUserInstance.verifyPin()
-                print(btcInfo)
-    if ( cmd == 'd' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
-                addr_id = btcInfo.get("data").get("address_id")
-                print(addr_id)
-                delInfo = mixinApiBotInstance.delAddress(addr_id)
-                print(delInfo)
-    if ( cmd == 'r' ):
-        with open('new_users.csv', newline='') as csvfile:
-            reader  = csv.reader(csvfile)
-            for row in reader:
-                pin         = row.pop()
-                userid      = row.pop()
-                session_id  = row.pop()
-                pin_token   = row.pop()
-                private_key = row.pop()
-                print(pin)
-                mixinApiNewUserInstance = generateMixinAPI(private_key,
-                                                            pin_token,
-                                                            session_id,
-                                                            userid,
-                                                            pin,"")
-                btcInfo = mixinApiBotInstance.createAddress(BTC_ASSET_ID, BTC_WALLET_ADDR,"BTC","","")
-                addr_id = btcInfo.get("data").get("address_id")
-                print(addr_id)
-                addrInfo = mixinApiBotInstance.getAddress(addr_id)
-                print(addrInfo)
+                    created_at = transfer_result.get("data").get("created_at")
+                    print(created_at + ":Pay BTC to Master ID with trace id:" + this_uuid + ", you can verify the result on https://mixin.one/snapshots/" + snapShotID)
+    if ( cmd == 'listaddress' ):
+        BTC_withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(BTC_ASSET_ID)
+        BTC_withdraw_addresses = BTC_withdraw_addresses_result.get("data")
+        print("BTC address is:=======")
+        for eachAddress in BTC_withdraw_addresses:
+            btcAddress = strPresent_of_btc_withdrawaddress(eachAddress)
+            print(btcAddress)
+        print("USDT address is:=======")
+        USDT_withdraw_addresses_result = mixinApiNewUserInstance.withdrawals_address(USDT_ASSET_ID)
+        USDT_withdraw_addresses = USDT_withdraw_addresses_result.get("data")
+        for eachAddress in USDT_withdraw_addresses:
+            usdtAddress = strPresent_of_btc_withdrawaddress(eachAddress)
+            print(usdtAddress)
+
+    if ( cmd == 'addbitcoinaddress' ):
+        BTC_depost_address = input("Bitcoin withdraw address:")
+        Confirm = input(BTC_depost_address + ", Type YES to confirm")
+        if (Confirm == "YES"):
+            tag_content = input("write a tag")
+            input_pin = input("pin:")
+            add_BTC_withdraw_addresses_result = mixinApiNewUserInstance.createAddress(BTC_ASSET_ID, BTC_depost_address, tag_content, asset_pin = input_pin)
+            address_id = add_BTC_withdraw_addresses_result.get("data").get("address_id")
+            print("the address :" + BTC_depost_address + " is added to your account with id:" + address_id)
+    if ( cmd == 'addusdtaddress' ):
+        USDT_depost_address = input("usdt withdraw address:")
+        Confirm = input(USDT_depost_address + ", Type YES to confirm")
+        if (Confirm == "YES"):
+            tag_content = input("tag:")
+            input_pin = input("pin:")
+
+            USDT_withdraw_addresses = mixinApiNewUserInstance.createAddress(USDT_ASSET_ID, USDT_depost_address, tag_content,  asset_pin = input_pin)
+            address_id = USDT_withdraw_addresses.get("data").get("address_id")
+            print("the address :" + BTC_depost_address + " is added to your account with id:" + address_id)
+
+    if ( cmd == 'removebtcaddress' ):
+        remove_withdraw_address_of(mixinApiNewUserInstance, BTC_ASSET_ID, "BTC")
+
+    if ( cmd == "removeusdtaddress"):
+        remove_withdraw_address_of(mixinApiNewUserInstance, USDT_ASSET_ID, "USDT")
+
+    if ( cmd == 'withdrawbtc' ):
+        result = withdraw_asset(BTC_ASSET_ID, "BTC")
+        if (result != None):
+            print(result)
+
+    if ( cmd == 'withdrawusdt' ):
+        withdraw_asset_id = USDT_ASSET_ID
+        withdraw_asset_name = "usdt"
+        result = withdraw_asset(USDT_ASSET_ID, "USDT")
+        if (result != None):
+            print(result)
+
+    if ( cmd == 'verifypin' ):
+        input_pin = input("input your account pin:")
+        print(mixinApiNewUserInstance.verifyPin(input_pin))
+    if ( cmd == 'updatepin' ):
+        newPin = input("input new pin:")
+        oldPin = input("input old pin:")
+        print(mixinApiNewUserInstance.updatePin(newPin,oldPin))

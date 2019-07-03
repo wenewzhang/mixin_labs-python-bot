@@ -1,16 +1,11 @@
-# Python Bitcoin tutorial based on Mixin Network
+# Command line bitcoin wallet written in python script based on Mixin Network
 ![cover](https://github.com/wenewzhang/mixin_labs-python-bot/raw/master/Bitcoin_python.jpg)
-A Mixin messenger bot will be created in this tutorial. The bot is powered by python, it echo message and Bitcoin from user.
+This a command line bitcoin/altcoin wallet written in python script based on Mixin Network.
 
 Full Mixin network resource [index](https://github.com/awesome-mixin-network/index_of_Mixin_Network_resource)
 
-## What you will learn from this tutorial
-1. [How to create bot in Mixin messenger and reply message to user](https://github.com/wenewzhang/mixin_labs-python-bot#create-bot-and-receive-message-from-user)
-2. [How to receive Bitcoin and send Bitcoin in Mixin Messenger](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README2.md)
-3. [How to create a Bitcoin wallet based on Mixin Network API](https://github.com/wenewzhang/mixin_labs-python-bot/blob/master/README3.md)
-## How to create bot in Mixin messenger and reply message to user
 ## Python 3 installation:
-This tutorial is written in Python 3.7.2 So you need to install Python 3.7.2 or above.
+This tool is written in Python 3.7.2 So you need to install Python 3.7.2 or above.
 
 macOS
 ```bash
@@ -77,7 +72,7 @@ sourcing an activate script in its bin directory
 
 You need create project directory, make it as a python's “virtual environment”, and install the required packages.
 ```bash
-mkdir mixin_labs-python-bot
+git clone https://github.com/myrual/mixin_labs-python-bot
 cd mixin_labs-python-bot
 python3 -m venv ./
 ```

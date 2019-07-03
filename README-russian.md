@@ -220,11 +220,10 @@ def on_message(ws, message):
 
 if __name__ == "__main__":
 
-    mixin_api = MIXIN_API(mixin_config)
-
-    mixin_ws = MIXIN_WS_API(on_message=on_message)
-
-    mixin_ws.run()
+    # mixin_api = MIXIN_API(mixin_config)
+    while True:
+        mixin_ws = MIXIN_WS_API(on_message=on_message)
+        mixin_ws.run()
 ```
 
 Запустите app-mini.py, НЕ ЗАБУДЬТЕ активировать перед этим  "виртуальное окружение" python"
@@ -254,9 +253,10 @@ ws open
 ```python
 if __name__ == "__main__":
 
-    mixin_api = MIXIN_API(mixin_config)
-    mixin_ws = MIXIN_WS_API(on_message=on_message)
-    mixin_ws.run()
+    # mixin_api = MIXIN_API(mixin_config)
+    while True:
+        mixin_ws = MIXIN_WS_API(on_message=on_message)
+        mixin_ws.run()
 ```
 
 Отправьте сообщение операции READ на сервер, чтобы он знал, что сообщение прочитано. Иначе бот получит повторное сообщение, когда он подключится к серверу, если не будет отметки о прочтении.

@@ -228,11 +228,10 @@ def on_message(ws, message):
 
 if __name__ == "__main__":
 
-    mixin_api = MIXIN_API(mixin_config)
-
-    mixin_ws = MIXIN_WS_API(on_message=on_message)
-
-    mixin_ws.run()
+    # mixin_api = MIXIN_API(mixin_config)
+    while True:
+        mixin_ws = MIXIN_WS_API(on_message=on_message)
+        mixin_ws.run()
 ```
 
 运行 app-mini.py, 记得要先激活“虚拟环境”哦!
@@ -260,9 +259,10 @@ WebSocket是建立在TCP基础之上的全双工通讯方式，我们需要建�
 ```python
 if __name__ == "__main__":
 
-    mixin_api = MIXIN_API(mixin_config)
-    mixin_ws = MIXIN_WS_API(on_message=on_message)
-    mixin_ws.run()
+    # mixin_api = MIXIN_API(mixin_config)
+    while True:
+        mixin_ws = MIXIN_WS_API(on_message=on_message)
+        mixin_ws.run()
 ```
 
 每接收到一个消息，需要按消息编号(message_id)给服务器回复一个"已读"的消息,避免服务器在机器人重新登入后，再次发送处理过的消息！

@@ -56,7 +56,7 @@ def on_message(ws, message):
 
 if __name__ == "__main__":
 
-    mixin_api = MIXIN_API(mixin_config)
+    # mixin_api = MIXIN_API(mixin_config)
     while True:
         mixin_ws = MIXIN_WS_API(on_message=on_message)
         mixin_ws.run()

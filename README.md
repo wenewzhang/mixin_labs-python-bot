@@ -216,11 +216,10 @@ def on_message(ws, message):
 
 if __name__ == "__main__":
 
-    mixin_api = MIXIN_API(mixin_config)
-
-    mixin_ws = MIXIN_WS_API(on_message=on_message)
-
-    mixin_ws.run()
+    # mixin_api = MIXIN_API(mixin_config)
+    while True:
+        mixin_ws = MIXIN_WS_API(on_message=on_message)
+        mixin_ws.run()
 ```
 
 Run the app-mini.py, DO NOT forget active the python "virtual environment" before!"
@@ -250,9 +249,10 @@ The code creates a websocket client.
 ```python
 if __name__ == "__main__":
 
-    mixin_api = MIXIN_API(mixin_config)
-    mixin_ws = MIXIN_WS_API(on_message=on_message)
-    mixin_ws.run()
+    # mixin_api = MIXIN_API(mixin_config)
+    while True:
+        mixin_ws = MIXIN_WS_API(on_message=on_message)
+        mixin_ws.run()
 ```
 
 Send a READ operation message to the server let it knows this message has been read. The bot will receive the duplicated message when the bot connected to server again if bot don't send response.
